@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
-import FlipMove from "react-flip-move";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { JSONTree } from "react-json-tree";
-import ForceGraph3D from 'react-force-graph-2d';
-import SpriteText from 'three-spritetext';
+import ForceGraph2D from 'react-force-graph-2d';
+import { motion } from 'framer-motion';
 import screenfull from 'screenfull';
+import * as d3 from 'd3-force';
 
 const customTheme = {
   scheme: 'material',
@@ -27,7 +27,7 @@ const customTheme = {
 };
 
 const mindmapData = [
-  { id: 'root', label: 'Embeddings Dimensions', parent: null, color: '#00000000' },
+  { id: 'root', label: 'Embeddings Dimensions', parent: null, color: '#ffffff' },
   { id: 'search', label: 'SEARCH', parent: 'root', color: '#ffff00' },
   { id: 'search-detail1', label: 'High-dimensional embeddings improve search accuracy', parent: 'search', color: '#ffff66' },
   { id: 'search-detail2', label: 'Better relevance ranking for complex queries', parent: 'search', color: '#ffff66' },
@@ -193,18 +193,18 @@ const Preview = ({ previewData, filePath, fileName, fileSize }) => {
     ];
 
     return sortedKeys.map((key) => (
-      <div
+      <motion.div
         key={key}
+        layout
         style={{
           ...styles.card,
           backgroundColor: selectedKeys.includes(key) ? '#f0c239' : '#ffffff',
-          transition: 'transform 0.3s ease, background-color 0.3s ease',
           ...(selectedKeys.includes(key) && { transform: 'scale(1.05)' }),
         }}
         onClick={() => handleKeySelection(key)}
       >
         <p style={styles.cardText}>{key}</p>
-      </div>
+      </motion.div>
     ));
   };
 
@@ -275,6 +275,39 @@ const Preview = ({ previewData, filePath, fileName, fileSize }) => {
       .map(node => ({ source: node.parent, target: node.id }))
   };
 
+  useEffect(() => {
+    if (graphData && graphData.nodes && graphData.links) {
+      const simulation = d3.forceSimulation(graphData.nodes)
+        .force('link', d3.forceLink(graphData.links).id(d => d.id))
+        .force('charge', d3.forceManyBody())
+        .force('center', d3.forceCenter(0, 0));
+
+      simulation.on('tick', () => {
+        if (graphRef.current) {
+          graphRef.current.d3Force('link').links(graphData.links);
+          graphRef.current.d3Force('charge').strength(-100);
+          graphRef.current.d3Force('center').x(0).y(0);
+        }
+      });
+
+      return () => simulation.stop();
+    }
+  }, [graphData]);
+
+  const handleClick = useCallback(node => {
+    if (graphRef.current && node) {
+      const distance = 40;
+      const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z);
+
+      graphRef.current.cameraPosition(
+        { x: node.x * distRatio, y: node.y * distRatio, z: node.z * distRatio }, // new position
+        node, // lookAt ({ x, y, z })
+        3000  // ms transition duration
+      );
+    }
+  }, [graphRef]);
+
+
   return (
     <section id="preview" style={styles.previewSection}>
       <div style={styles.fileDetails}>
@@ -291,17 +324,17 @@ const Preview = ({ previewData, filePath, fileName, fileSize }) => {
             onChange={(e) => setFilterText(e.target.value)}
             style={styles.filterInput}
           />
-          <button onClick={handleSelectAll} style={styles.button}>Select All</button>
-          <button onClick={handleDeselectAll} style={styles.button}>Deselect All</button>
-          <button onClick={handleToggleOverlay} style={styles.questionMarkButton}>?</button>
+          <button className="button" onClick={handleSelectAll}>Select All</button>
+          <button className="button" onClick={handleDeselectAll}>Deselect All</button>
+          <button className="question-button" onClick={handleToggleOverlay}>?</button>
         </div>
       </div>
       <div id="previewContainer" style={styles.previewContainer}>
         <div className="preview-column" style={styles.previewColumn}>
           <h3 style={styles.heading}>Select Embedding Keys</h3>
-          <FlipMove id="textKeys" style={styles.cardsContainer}>
+          <div id="textKeys" style={styles.cardsContainer}>
             {displayPreview()}
-          </FlipMove>
+          </div>
         </div>
         <div className="preview-column" style={styles.previewColumn}>
           <h3 style={styles.heading}>Generated Document</h3>
@@ -347,7 +380,7 @@ const Preview = ({ previewData, filePath, fileName, fileSize }) => {
                 <div style={{ fontSize: '0.9rem', color: '#666', marginTop: '0.5rem' }}>Classify vectors into predefined categories based on their embeddings</div>
               </div>
             </div>
-            <div style={{ background: "radial-gradient(#32473387, rgb(38 18 225 / 47%))", maxHeight: "50vh", borderRadius: "10px", padding: "20px", width: "77vw", boxShadow: "0px 0px 10px #0000008f", transition: 'opacity 0.5s ease' }} ref={graphContainerRef}>
+            <div style={{ background: "radial-gradient(rgba(50, 71, 51, 0.53), rgb(0 0 0))", maxHeight: "50vh", borderRadius: "10px", padding: "20px", width: "77vw", boxShadow: "0px 0px 10px #0000008f", transition: 'opacity 0.5s ease' }} ref={graphContainerRef}>
               <div id="graph" style={{ width: "100%", height: "100%", transition: 'opacity 0.5s ease' }}>
                 <div style={styles.navigationButtons}>
                   <button onClick={() => navigateGraph('prev')} style={styles.navButton}>←</button>
@@ -355,26 +388,33 @@ const Preview = ({ previewData, filePath, fileName, fileSize }) => {
                   <button onClick={handleToggleFullScreen} style={styles.fullScreenButton}>⛶</button>
                 </div>
 
-                <ForceGraph3D
+                <ForceGraph2D
                   ref={graphRef}
                   nodeRelSize={5}
-                  linkWidth={1.5}
-                  width={graphRef.current ? graphRef.current.clientWidth : 1000}
-                  height={graphRef.current ? graphRef.current.clientHeight : 300}
+                  linkWidth={5.5}
+                  width={1000}
+                  height={300}
                   graphData={graphData}
                   nodeAutoColorBy="color"
+                  cooldownTicks={100}
+                  onEngineStop={() => graphRef.current.zoomToFit(400)}
+                  onNodeDragEnd={node => {
+                    node.fx = node.x;
+                    node.fy = node.y;
+                    node.fz = node.z;
+                  }}
                   linkColor={() => '#cccccc'}
-                  linkDirectionalParticles={4}
-                  linkDirectionalParticleSpeed={d => d.value * 0.001}
-                  nodeLabel="name"
+                  linkDirectionalParticles="2"
+                  linkDirectionalParticleSpeed={d => 2 * 0.001}
+                  nodeLabel="label"
                   nodeCanvasObject={(node, ctx, globalScale) => {
-                    const label = node.id;
+                    const label = node.name;
                     const fontSize = 12 / globalScale;
                     ctx.font = `${fontSize}px Sans-Serif`;
                     const textWidth = ctx.measureText(label).width;
-                    const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 0.2); // some padding
+                    const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 1.6); // some padding
 
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                    ctx.fillStyle = 'rgba(15, 15, 15, 0.80)';
                     ctx.fillRect(node.x - bckgDimensions[0] / 2, node.y - bckgDimensions[1] / 2, ...bckgDimensions);
 
                     ctx.textAlign = 'center';
@@ -389,12 +429,7 @@ const Preview = ({ previewData, filePath, fileName, fileSize }) => {
                     const bckgDimensions = node.__bckgDimensions;
                     bckgDimensions && ctx.fillRect(node.x - bckgDimensions[0] / 2, node.y - bckgDimensions[1] / 2, ...bckgDimensions);
                   }}
-                  nodeThreeObject={node => {
-                    const sprite = new SpriteText(node.name);
-                    sprite.color = node.color;
-                    sprite.textHeight = 8;
-                    return sprite;
-                  }}
+                  onNodeClick={handleClick}
                 />
               </div>
             </div>
@@ -445,9 +480,9 @@ const styles = {
     backgroundColor: '#007bff',
     color: '#fff',
     cursor: 'pointer',
-    transition: 'background-color 0.3s ease, transform 0.3s ease',
+    transition: 'all 0.3s ease',
     '&:hover': {
-      backgroundColor: '#0056b3',
+      backgroundColor: 'var(--accent-color)',
       transform: 'scale(1.05)',
     },
   },
@@ -493,12 +528,10 @@ const styles = {
   previewColumn: {
     flex: '0 0 30%',
     margin: '10px',
-    backgroundColor: '#ffffff',
     borderRadius: '8px',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
     padding: '20px',
     overflow: 'hidden',
-    transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
+    transition: 'all 0.3s ease',
   },
   heading: {
     marginBottom: '20px',
@@ -547,19 +580,21 @@ const styles = {
     transition: 'gap 0.3s ease',
   },
   card: {
-    padding: '10px',
-    border: '1px solid #ddd',
+    padding: 10,
+    border: '1px solid rgb(221, 221, 221)',
     borderRadius: '4px',
     cursor: 'pointer',
     marginLeft: '6px',
     marginRight: '6px',
-    width: '80px',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+    boxShadow: 'rgba(0, 0, 0, 0.1) 0px 2px 4px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     textAlign: 'center',
-    transition: 'transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease',
+    flexFlow: 'nowrap',
+    // overflowWrap: 'anywhere',
+    backgroundColor: 'rgb(240, 194, 57)',
+    transition: 'all 0.3s ease',
     '&:hover': {
       transform: 'scale(1.05)',
       backgroundColor: '#f0f0f0',

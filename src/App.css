@@ -220,10 +220,30 @@ footer {
   background-color: var(--primary-color);
   color: #fff;
   border: none;
+  margin-right: 4px;
+  margin-left: 4px;
   border-radius: var(--border-radius);
   cursor: pointer;
   transition: var(--transition);
 }
+
+.question-button {
+  padding: 0.5rem 1rem;
+  background-color: var(--text-color);
+  color: #fff;
+  border: none;
+  margin-right: 4px;
+  margin-left: 4px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.question-button:hover {
+  transform: scale(0.90);
+  background-color: var(--secondary-color);
+}
+
 
 #sendButton {
   background-color: var(--secondary-color);
