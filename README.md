@@ -1,7 +1,7 @@
 <h1 style="text-align: center;">Vect.r8 (Vector Embeddings Creation, Transformation & Retrieval) 🚀</h1>
 
 <p align="center">
-  <img src="https://github.com/itsPreto/Ellegr/assets/45348368/c41f00c6-4222-473f-b169-cd41db516502" alt="logo" />
+  <img src="./src/assets/logo.png" alt="logo" />
 </p>
 
 <p align="center">
@@ -12,36 +12,40 @@
 
 ## Table of Contents
 
-1. [Prerequisites](https://github.com/itsPreto/Ellegr/blob/main/README.md#prerequisites)
-    - [Python 3.7+](https://github.com/itsPreto/Ellegr/blob/main/README.md#python-37)
-    - [Flask](https://github.com/itsPreto/Ellegr/blob/main/README.md#flask)
-    - [Flask-CORS](https://github.com/itsPreto/Ellegr/blob/main/README.md#flask-cors)
-    - [transformers](https://github.com/itsPreto/Ellegr/blob/main/README.md#transformers)
-    - [torch](https://github.com/itsPreto/Ellegr/blob/main/README.md#torch)
-    - [numpy](https://github.com/itsPreto/Ellegr/blob/main/README.md#numpy)
-    - [pandas](https://github.com/itsPreto/Ellegr/blob/main/README.md#pandas)
-2. [Installation](https://github.com/itsPreto/Ellegr/blob/main/README.md#installation)
-3. [Running the Application](https://github.com/itsPreto/Ellegr/blob/main/README.md#running-the-application)
-4. [Uploading Files 📂](https://github.com/itsPreto/Ellegr/blob/main/README.md#uploading-files-)
-    - [Command Line](https://github.com/itsPreto/Ellegr/blob/main/README.md#command-line)
-5. [Previewing Data 🧐](https://github.com/itsPreto/Ellegr/blob/main/README.md#previewing-data-)
-    - [Command Line](https://github.com/itsPreto/Ellegr/blob/main/README.md#command-line-1)
-6. [Creating Vector Embeddings 🧩](https://github.com/itsPreto/Ellegr/blob/main/README.md#creating-vector-embeddings-)
-    - [Command Line](https://github.com/itsPreto/Ellegr/blob/main/README.md#command-line-2)
-7. [Querying the Vector Database 🔍](https://github.com/itsPreto/Ellegr/blob/main/README.md#querying-the-vector-database-)
-    - [Command Line](https://github.com/itsPreto/Ellegr/blob/main/README.md#command-line-3)
-8. [Managing the Vector Database 🛠️](https://github.com/itsPreto/Ellegr/blob/main/README.md#managing-the-vector-database-)
-    - [Command Line](https://github.com/itsPreto/Ellegr/blob/main/README.md#command-line-4)
-9. [UI Walkthrough 🎨](https://github.com/itsPreto/Ellegr/blob/main/README.md#ui-walkthrough-)
-    - [Uploading Files](https://github.com/itsPreto/Ellegr/blob/main/README.md#uploading-files-1)
-    - [Previewing Data](https://github.com/itsPreto/Ellegr/blob/main/README.md#previewing-data-1)
-    - [Creating Vector Embeddings](https://github.com/itsPreto/Ellegr/blob/main/README.md#creating-vector-embeddings-1)
-    - [Querying the Vector Database](https://github.com/itsPreto/Ellegr/blob/main/README.md#querying-the-vector-database-1)
-    - [Managing the Vector Database](https://github.com/itsPreto/Ellegr/blob/main/README.md#managing-the-vector-database-1)
+1. [Prerequisites](https://github.com/itsPreto/VECTR8/blob/main/README.md#prerequisites)
+    - [Python 3.7+](https://github.com/itsPreto/VECTR8/blob/main/README.md#python-37)
+    - [Flask](https://github.com/itsPreto/VECTR8/blob/main/README.md#flask)
+    - [Flask-CORS](https://github.com/itsPreto/VECTR8/blob/main/README.md#flask-cors)
+    - [transformers](https://github.com/itsPreto/VECTR8/blob/main/README.md#transformers)
+    - [torch](https://github.com/itsPreto/VECTR8/blob/main/README.md#torch)
+    - [numpy](https://github.com/itsPreto/VECTR8/blob/main/README.md#numpy)
+    - [pandas](https://github.com/itsPreto/VECTR8/blob/main/README.md#pandas)
+2. [Installation](https://github.com/itsPreto/VECTR8/blob/main/README.md#installation)
+3. [Running the Application](https://github.com/itsPreto/VECTR8/blob/main/README.md#running-the-application)
+4. [Uploading Files 📂](https://github.com/itsPreto/VECTR8/blob/main/README.md#uploading-files-)
+    - [Command Line](https://github.com/itsPreto/VECTR8/blob/main/README.md#command-line)
+5. [Previewing Data 🧐](https://github.com/itsPreto/VECTR8/blob/main/README.md#previewing-data-)
+    - [Command Line](https://github.com/itsPreto/VECTR8/blob/main/README.md#command-line-1)
+6. [Creating Vector Embeddings 🧩](https://github.com/itsPreto/VECTR8/blob/main/README.md#creating-vector-embeddings-)
+    - [Command Line](https://github.com/itsPreto/VECTR8/blob/main/README.md#command-line-2)
+7. [Querying the Vector Database 🔍](https://github.com/itsPreto/VECTR8/blob/main/README.md#querying-the-vector-database-)
+    - [Command Line](https://github.com/itsPreto/VECTR8/blob/main/README.md#command-line-3)
+8. [Managing the Vector Database 🛠️](https://github.com/itsPreto/VECTR8/blob/main/README.md#managing-the-vector-database-)
+    - [Command Line](https://github.com/itsPreto/VECTR8/blob/main/README.md#command-line-4)
+9. [UI Walkthrough 🎨](https://github.com/itsPreto/VECTR8/blob/main/README.md#ui-walkthrough-)
+    - [Uploading Files](https://github.com/itsPreto/VECTR8/blob/main/README.md#uploading-files-1)
+    - [Previewing Data](https://github.com/itsPreto/VECTR8/blob/main/README.md#previewing-data-1)
+    - [Creating Vector Embeddings](https://github.com/itsPreto/VECTR8/blob/main/README.md#creating-vector-embeddings-1)
+    - [Querying the Vector Database](https://github.com/itsPreto/VECTR8/blob/main/README.md#querying-the-vector-database-1)
+    - [Managing the Vector Database](https://github.com/itsPreto/VECTR8/blob/main/README.md#managing-the-vector-database-1)
 
 -----
 
-https://github.com/itsPreto/Ellegr/assets/45348368/872aa5aa-2903-4621-898d-10422ace0bbf
+<video width="100%" height="auto" controls>
+  <source src="./src/assets/VECTR8-demo.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 
 ## Prerequisites
 ### Python 3.7+
@@ -73,8 +77,8 @@ Processes CSV and JSON files. Utilized throughout the application. 📊
 
 1. Clone the repository:
     ```sh
-    git clone https://github.com/itsPreto/Ellegr.git
-    cd Ellegr
+    git clone https://github.com/itsPreto/VECTR8.git
+    cd VECTR8
     ```
 2. Install the required packages:
     ```sh
