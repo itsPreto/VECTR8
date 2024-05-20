@@ -115,31 +115,31 @@
     </tr>
     <tr>
       <td><img src="https://img.icons8.com/color/24/000000/python.png" alt="Python"> <strong>Python 3.7+</strong></td>
-      <td>The application requires Python 3.7 or higher to leverage modern libraries and syntax. 🐍</td>
+      <td>The application requires Python 3.7 or higher to leverage modern libraries and syntax.</td>
     </tr>
     <tr>
-      <td><img src="https://img.icons8.com/color/24/000000/flask.png" alt="Flask"> <strong>Flask</strong></td>
-      <td>Flask creates the web server for the UI. 🌐</td>
+      <td><img src="https://img.icons8.com/color/24/000000/chemical-plant.png" alt="flask icon"> <strong>Flask</strong></td>
+      <td>Essential for running embedding models. Utilized by transformers.</td>
     </tr>
     <tr>
       <td><img src="https://img.icons8.com/color/24/000000/globe.png" alt="Flask-CORS"> <strong>Flask-CORS</strong></td>
-      <td>Enables CORS for frontend-backend communication. 🌍</td>
+      <td>Enables CORS for frontend-backend communication.</td>
     </tr>
     <tr>
       <td><img src="https://img.icons8.com/color/24/000000/robot-2.png" alt="transformers"> <strong>transformers</strong></td>
-      <td>Used for creating vector embeddings with pre-trained models. 🤖</td>
+      <td>Used for creating vector embeddings with pre-trained models.</td>
     </tr>
     <tr>
-      <td><img src="https://img.icons8.com/color/24/000000/torch.png" alt="torch"> <strong>torch</strong></td>
-      <td>Essential for running embedding models. Utilized by transformers. 🔥</td>
+      <td><img src="https://img.icons8.com/color/24/000000/fire-element.png" alt="fire icon"> <strong>torch</strong></td>
+      <td>Essential for running embedding models. Utilized by transformers.</td>
     </tr>
     <tr>
       <td><img src="https://img.icons8.com/color/24/000000/calculator.png" alt="numpy"> <strong>numpy</strong></td>
-      <td>Handles arrays and mathematical operations. Used throughout the application. 🧮</td>
+      <td>Handles arrays and mathematical operations. Used throughout the application.</td>
     </tr>
     <tr>
       <td><img src="https://img.icons8.com/color/24/000000/data-sheet.png" alt="pandas"> <strong>pandas</strong></td>
-      <td>Processes CSV and JSON files. Utilized throughout the application. 📊</td>
+      <td>Processes CSV and JSON files. Utilized throughout the application.</td>
     </tr>
   </table>
 </div>
