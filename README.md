@@ -41,10 +41,8 @@
 
 -----
 
-<video width="100%" height="auto" controls>
-  <source src="./src/assets/VECTR8-demo.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+
+https://github.com/itsPreto/VECTR8/assets/45348368/e9a73466-e103-4e92-af76-3dd69e5057cd
 
 
 ## Prerequisites
