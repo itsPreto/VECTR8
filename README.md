@@ -18,7 +18,6 @@
   </font>
 </div>
 
-<h2 align="center"> Table of Contents </h2>
 <h2 align="center">Table of Contents</h2>
 
 <div align="center">
