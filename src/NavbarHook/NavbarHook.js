@@ -27,52 +27,34 @@ const NavbarHook = () => {
       <ul className={listClassName}>
         <li>
           <NavLink to="/" className={linkClassName} onClick={closeMobileMenu}>
-            Home
+            Upload
           </NavLink>
         </li>
         <li>
           <NavLink
-            to="/news"
+            to="/preview"
             className={linkClassName}
             onClick={closeMobileMenu}
           >
-            News
+            Preview
           </NavLink>
         </li>
         <li>
           <NavLink
-            to="/about-us"
+            to="/embed"
             className={linkClassName}
             onClick={closeMobileMenu}
           >
-            About Us
+            Embeddings
           </NavLink>
         </li>
         <li>
           <NavLink
-            to="/favorite"
+            to="/query"
             className={linkClassName}
             onClick={closeMobileMenu}
           >
-            Favorite
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/location"
-            className={linkClassName}
-            onClick={closeMobileMenu}
-          >
-            Location
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/get-started"
-            className={`${linkClassName} ${buttonClassName}`}
-            onClick={closeMobileMenu}
-          >
-            Get Started
+            Query
           </NavLink>
         </li>
       </ul>
@@ -81,9 +63,9 @@ const NavbarHook = () => {
 
   return (
     <header className="header">
-      <nav className="nav container">
-        <NavLink to="/" className="nav__logo">
-          Navigation Bar
+      <nav className="nav container">    
+        <NavLink to="/" className="nav__logo" style={{ paddingTop: "0px", paddingRight: "46px", paddingBottom: "0px", paddingLeft: "46px",color: "#1bcaff", backgroundColor: '#333333' }}>
+          ElleGr
         </NavLink>
 
         {isMobile && (

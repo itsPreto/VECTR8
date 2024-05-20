@@ -1,21 +1,30 @@
-import React from "react";
-import "./App.css";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Navbar from "./Navbar/Navbar";
 import NavbarHook from "./NavbarHook/NavbarHook";
-import Home from "./pages/Home";
-import News from "./pages/News";
+import Upload from "./pages/Upload";
+import Preview from "./pages/Preview";
+import Embed from "./pages/Embed";
+import Query from "./pages/Query";
+import './App.css';
 
 const App = () => {
+  const [previewData, setPreviewData] = useState(null);
+  const [filePath, setFilePath] = useState(null);
+
+  const handlePreviewData = (data, path) => {
+    setPreviewData(data);
+    setFilePath(path); // Set file path
+  };
+
   return (
     <Router>
-      {/* <Navbar /> */}
       <NavbarHook />
       <main className="main-content">
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/news" element={<News />} />
-          {/* Define other routes that you need*/}
+          <Route path="/" element={<Upload onPreviewData={handlePreviewData} />} />
+          <Route path="/preview" element={<Preview previewData={previewData} filePath={filePath} />} />
+          <Route path="/embed" element={<Embed />} />
+          <Route path="/query" element={<Query />} />
         </Routes>
       </main>
     </Router>

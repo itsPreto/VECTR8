@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@400;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap");
 
 * {
   box-sizing: border-box;
@@ -8,23 +8,27 @@
 
 :root {
   --header-height: 3.5rem;
-  --first-color: hsl(28, 88%, 62%);
-  --title-color: hsl(0, 0%, 95%);
-  --text-color: hsl(0, 0%, 75%);
-  --body-color: hsl(0, 0%, 6%);
-  --body-font: "Montserrat", sans-serif;
-  --second-font: "Dancing Script", cursive;
-  --h2-font-size: 1.25rem;
-  --small-font-size: 0.813rem;
+  --primary-color: #007bff;
+  --secondary-color: #6c757d;
+  --accent-color: #ffc107;
+  --background-color: #f8f9fa;
+  --text-color: #343a40;
+  --border-color: #dee2e6;
+  --font-family: 'Montserrat', sans-serif;
+  --font-size-large: 1.5rem;
+  --font-size-medium: 1rem;
+  --font-size-small: 0.875rem;
   --font-semi-bold: 600;
+  --border-radius: 8px;
+  --transition: all 0.3s ease;
   --z-tooltip: 10;
   --z-fixed: 100;
 }
 
 body {
-  background-color: var(--body-color);
+  background-color: var(--background-color);
   color: var(--text-color);
-  font-family: var(--body-font);
+  font-family: var(--font-family);
 }
 
 ul {
@@ -33,4 +37,6 @@ ul {
 
 a {
   text-decoration: none;
+  color: inherit;
+  transition: var(--transition);
 }

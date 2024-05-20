@@ -1,0 +1,650 @@
+{
+    "links": [
+        {
+            "source": "spring-ai-chroma",
+            "target": "spring-ai-openai"
+        },
+        {
+            "source": "spring-ai-pinecone",
+            "target": "spring-ai-gemfire"
+        },
+        {
+            "source": "spring-ai-cassandra",
+            "target": "spring-ai-transformers"
+        },
+        {
+            "source": "spring-ai-openai",
+            "target": "spring-ai-retry"
+        },
+        {
+            "source": "spring-ai-elasticsearch-store",
+            "target": "spring-ai-neo4j-store"
+        },
+        {
+            "source": "spring-ai-spring-boot-autoconfigure",
+            "target": "spring-ai-neo4j-store"
+        },
+        {
+            "source": "spring-ai-pgvector-store",
+            "target": "spring-ai-neo4j-store"
+        },
+        {
+            "source": "spring-ai-hanadb-store",
+            "target": "spring-ai-openai"
+        },
+        {
+            "source": "spring-ai-ollama",
+            "target": "spring-ai-core"
+        },
+        {
+            "source": "spring-ai-chroma",
+            "target": "spring-ai-gemfire"
+        },
+        {
+            "source": "spring-ai-spring-boot-autoconfigure",
+            "target": "spring-ai-anthropic"
+        },
+        {
+            "source": "spring-ai-spring-boot-autoconfigure",
+            "target": "spring-ai-qdrant"
+        },
+        {
+            "source": "spring-ai-azure",
+            "target": "spring-ai-core"
+        },
+        {
+            "source": "spring-ai-spring-boot-autoconfigure",
+            "target": "spring-ai-cassandra"
+        },
+        {
+            "source": "spring-ai-spring-boot-autoconfigure",
+            "target": "spring-ai-hanadb-store"
+        },
+        {
+            "source": "spring-ai-anthropic",
+            "target": "spring-ai-retry"
+        },
+        {
+            "source": "spring-ai-mistral-ai",
+            "target": "spring-ai-retry"
+        },
+        {
+            "source": "spring-ai-weaviate",
+            "target": "spring-ai-core"
+        },
+        {
+            "source": "spring-ai-stability-ai",
+            "target": "spring-ai-retry"
+        },
+        {
+            "source": "spring-ai-azure",
+            "target": "spring-ai-transformers"
+        },
+        {
+            "source": "spring-ai-mongodb-atlas-store",
+            "target": "spring-ai-neo4j-store"
+        },
+        {
+            "source": "spring-ai-weaviate",
+            "target": "spring-ai-transformers"
+        },
+        {
+            "source": "spring-ai-pinecone",
+            "target": "spring-ai-neo4j-store"
+        },
+        {
+            "source": "spring-ai-postgresml",
+            "target": "spring-ai-core"
+        },
+        {
+            "source": "spring-ai-spring-boot-testcontainers",
+            "target": "spring-ai-weaviate"
+        },
+        {
+            "source": "spring-ai-gemfire",
+            "target": "spring-ai-core"
+        },
+        {
+            "source": "spring-ai-chroma",
+            "target": "spring-ai-neo4j-store"
+        },
+        {
+            "source": "spring-ai-spring-boot-autoconfigure",
+            "target": "spring-ai-pgvector-store"
+        },
+        {
+            "source": "spring-ai-milvus-store",
+            "target": "spring-ai-openai"
+        },
+        {
+            "source": "spring-ai-vertex-ai-gemini",
+            "target": "spring-ai-core"
+        },
+        {
+            "source": "spring-ai-spring-boot-autoconfigure",
+            "target": "spring-ai-bedrock"
+        },
+        {
+            "source": "spring-ai-milvus-store",
+            "target": "spring-ai-core"
+        },
+        {
+            "source": "spring-ai-core",
+            "target": "spring-ai-gemfire"
+        },
+        {
+            "source": "spring-ai-spring-boot-autoconfigure",
+            "target": "spring-ai-chroma"
+        },
+        {
+            "source": "spring-ai-gemfire",
+            "target": "spring-ai-transformers"
+        },
+        {
+            "source": "spring-ai-cassandra",
+            "target": "spring-ai-gemfire"
+        },
+        {
+            "source": "spring-ai-spring-boot-testcontainers",
+            "target": "spring-ai-core"
+        },
+        {
+            "source": "spring-ai-watsonx-ai",
+            "target": "spring-ai-retry"
+        },
+        {
+            "source": "spring-ai-qdrant",
+            "target": "spring-ai-core"
+        },
+        {
+            "source": "spring-ai-spring-boot-testcontainers",
+            "target": "spring-ai-transformers"
+        },
+        {
+            "source": "spring-ai-mongodb-atlas-store",
+            "target": "spring-ai-core"
+        },
+        {
+            "source": "spring-ai-spring-boot-autoconfigure",
+            "target": "spring-ai-mistral-ai"
+        },
+        {
+            "source": "spring-ai-spring-boot-testcontainers",
+            "target": "spring-ai-ollama"
+        },
+        {
+            "source": "spring-ai-spring-boot-autoconfigure",
+            "target": "spring-ai-elasticsearch-store"
+        },
+        {
+            "source": "spring-ai-azure-openai",
+            "target": "spring-ai-core"
+        },
+        {
+            "source": "spring-ai-azure",
+            "target": "spring-ai-gemfire"
+        },
+        {
+            "source": "spring-ai-spring-boot-autoconfigure",
+            "target": "spring-ai-azure"
+        },
+        {
+            "source": "spring-ai-weaviate",
+            "target": "spring-ai-gemfire"
+        },
+        {
+            "source": "spring-ai-redis",
+            "target": "spring-ai-core"
+        },
+        {
+            "source": "spring-ai-spring-boot-autoconfigure",
+            "target": "spring-ai-weaviate"
+        },
+        {
+            "source": "spring-ai-anthropic",
+            "target": "spring-ai-core"
+        },
+        {
+            "source": "spring-ai-cassandra",
+            "target": "spring-ai-neo4j-store"
+        },
+        {
+            "source": "spring-ai-elasticsearch-store",
+            "target": "spring-ai-openai"
+        },
+        {
+            "source": "spring-ai-redis",
+            "target": "spring-ai-transformers"
+        },
+        {
+            "source": "spring-ai-elasticsearch-store",
+            "target": "spring-ai-core"
+        },
+        {
+            "source": "spring-ai-spring-boot-autoconfigure",
+            "target": "spring-ai-openai"
+        },
+        {
+            "source": "spring-ai-spring-boot-autoconfigure",
+            "target": "spring-ai-azure-openai"
+        },
+        {
+            "source": "spring-ai-spring-boot-autoconfigure",
+            "target": "spring-ai-core"
+        },
+        {
+            "source": "spring-ai-pgvector-store",
+            "target": "spring-ai-core"
+        },
+        {
+            "source": "spring-ai-vertex-ai-palm2",
+            "target": "spring-ai-core"
+        },
+        {
+            "source": "spring-ai-huggingface",
+            "target": "spring-ai-core"
+        },
+        {
+            "source": "spring-ai-neo4j-store",
+            "target": "spring-ai-core"
+        },
+        {
+            "source": "spring-ai-spring-boot-autoconfigure",
+            "target": "spring-ai-transformers"
+        },
+        {
+            "source": "spring-ai-azure",
+            "target": "spring-ai-neo4j-store"
+        },
+        {
+            "source": "spring-ai-spring-boot-autoconfigure",
+            "target": "spring-ai-postgresml"
+        },
+        {
+            "source": "spring-ai-qdrant",
+            "target": "spring-ai-openai"
+        },
+        {
+            "source": "spring-ai-spring-boot-autoconfigure",
+            "target": "spring-ai-pinecone"
+        },
+        {
+            "source": "spring-ai-milvus-store",
+            "target": "spring-ai-gemfire"
+        },
+        {
+            "source": "spring-ai-mongodb-atlas-store",
+            "target": "spring-ai-openai"
+        },
+        {
+            "source": "spring-ai-weaviate",
+            "target": "spring-ai-neo4j-store"
+        },
+        {
+            "source": "spring-ai-openai",
+            "target": "spring-ai-core"
+        },
+        {
+            "source": "spring-ai-spring-boot-testcontainers",
+            "target": "spring-ai-gemfire"
+        },
+        {
+            "source": "pdf-reader",
+            "target": "spring-ai-core"
+        },
+        {
+            "source": "spring-ai-spring-boot-autoconfigure",
+            "target": "spring-ai-milvus-store"
+        },
+        {
+            "source": "spring-ai-pinecone",
+            "target": "spring-ai-core"
+        },
+        {
+            "source": "spring-ai-qdrant",
+            "target": "spring-ai-gemfire"
+        },
+        {
+            "source": "spring-ai-spring-boot-autoconfigure",
+            "target": "spring-ai-stability-ai"
+        },
+        {
+            "source": "spring-ai-mongodb-atlas-store",
+            "target": "spring-ai-gemfire"
+        },
+        {
+            "source": "spring-ai-pinecone",
+            "target": "spring-ai-transformers"
+        },
+        {
+            "source": "spring-ai-core",
+            "target": "spring-ai-neo4j-store"
+        },
+        {
+            "source": "spring-ai-mistral-ai",
+            "target": "spring-ai-core"
+        },
+        {
+            "source": "spring-ai-chroma",
+            "target": "spring-ai-core"
+        },
+        {
+            "source": "spring-ai-stability-ai",
+            "target": "spring-ai-core"
+        },
+        {
+            "source": "spring-ai-spring-boot-autoconfigure",
+            "target": "spring-ai-mongodb-atlas-store"
+        },
+        {
+            "source": "spring-ai-pgvector-store",
+            "target": "spring-ai-openai"
+        },
+        {
+            "source": "spring-ai-spring-boot-autoconfigure",
+            "target": "spring-ai-vertex-ai-gemini"
+        },
+        {
+            "source": "spring-ai-spring-boot-autoconfigure",
+            "target": "spring-ai-vertex-ai-palm2"
+        },
+        {
+            "source": "spring-ai-redis",
+            "target": "spring-ai-gemfire"
+        },
+        {
+            "source": "spring-ai-neo4j-store",
+            "target": "spring-ai-openai"
+        },
+        {
+            "source": "spring-ai-milvus-store",
+            "target": "spring-ai-neo4j-store"
+        },
+        {
+            "source": "spring-ai-transformers",
+            "target": "spring-ai-core"
+        },
+        {
+            "source": "spring-ai-hanadb-store",
+            "target": "spring-ai-core"
+        },
+        {
+            "source": "spring-ai-spring-boot-autoconfigure",
+            "target": "spring-ai-huggingface"
+        },
+        {
+            "source": "spring-ai-test",
+            "target": "spring-ai-core"
+        },
+        {
+            "source": "spring-ai-elasticsearch-store",
+            "target": "spring-ai-gemfire"
+        },
+        {
+            "source": "spring-ai-spring-boot-autoconfigure",
+            "target": "spring-ai-gemfire"
+        },
+        {
+            "source": "spring-ai-pgvector-store",
+            "target": "spring-ai-gemfire"
+        },
+        {
+            "source": "spring-ai-spring-boot-autoconfigure",
+            "target": "spring-ai-redis"
+        },
+        {
+            "source": "spring-ai-spring-boot-autoconfigure",
+            "target": "spring-ai-ollama"
+        },
+        {
+            "source": "spring-ai-neo4j-store",
+            "target": "spring-ai-gemfire"
+        },
+        {
+            "source": "spring-ai-bedrock",
+            "target": "spring-ai-core"
+        },
+        {
+            "source": "spring-ai-watsonx-ai",
+            "target": "spring-ai-core"
+        },
+        {
+            "source": "spring-ai-spring-boot-autoconfigure",
+            "target": "spring-ai-retry"
+        },
+        {
+            "source": "spring-ai-spring-boot-testcontainers",
+            "target": "spring-ai-spring-boot-autoconfigure"
+        },
+        {
+            "source": "spring-ai-spring-boot-autoconfigure",
+            "target": "spring-ai-watsonx-ai"
+        },
+        {
+            "source": "spring-ai-hanadb-store",
+            "target": "pdf-reader"
+        },
+        {
+            "source": "spring-ai-redis",
+            "target": "spring-ai-neo4j-store"
+        },
+        {
+            "source": "tika-reader",
+            "target": "spring-ai-core"
+        },
+        {
+            "source": "spring-ai-cassandra",
+            "target": "spring-ai-core"
+        },
+        {
+            "source": "spring-ai-openai",
+            "target": "spring-ai-gemfire"
+        }
+    ],
+    "nodes": [
+        {
+            "description": "spring-ai-weaviate",
+            "fileCount": 4,
+            "fileSize": 44839,
+            "id": "spring-ai-weaviate"
+        },
+        {
+            "description": "spring-ai-ollama",
+            "fileCount": 16,
+            "fileSize": 86427,
+            "id": "spring-ai-ollama"
+        },
+        {
+            "description": "spring-ai-anthropic",
+            "fileCount": 16,
+            "fileSize": 85563,
+            "id": "spring-ai-anthropic"
+        },
+        {
+            "description": "spring-ai-transformers",
+            "fileCount": 5,
+            "fileSize": 31142,
+            "id": "spring-ai-transformers"
+        },
+        {
+            "description": "spring-ai-elasticsearch-store",
+            "fileCount": 4,
+            "fileSize": 32427,
+            "id": "spring-ai-elasticsearch-store"
+        },
+        {
+            "description": "spring-ai-pinecone",
+            "fileCount": 2,
+            "fileSize": 22927,
+            "id": "spring-ai-pinecone"
+        },
+        {
+            "description": "spring-ai-stability-ai",
+            "fileCount": 8,
+            "fileSize": 36079,
+            "id": "spring-ai-stability-ai"
+        },
+        {
+            "description": "spring-ai-test",
+            "fileCount": 1,
+            "fileSize": 3431,
+            "id": "spring-ai-test"
+        },
+        {
+            "description": "spring-ai-watsonx-ai",
+            "fileCount": 12,
+            "fileSize": 49759,
+            "id": "spring-ai-watsonx-ai"
+        },
+        {
+            "description": "spring-ai-milvus-store",
+            "fileCount": 3,
+            "fileSize": 31500,
+            "id": "spring-ai-milvus-store"
+        },
+        {
+            "description": "tika-reader",
+            "fileCount": 2,
+            "fileSize": 8028,
+            "id": "tika-reader"
+        },
+        {
+            "description": "spring-ai-postgresml",
+            "fileCount": 4,
+            "fileSize": 25282,
+            "id": "spring-ai-postgresml"
+        },
+        {
+            "description": "pdf-reader",
+            "fileCount": 10,
+            "fileSize": 53677,
+            "id": "pdf-reader"
+        },
+        {
+            "description": "spring-ai-qdrant",
+            "fileCount": 5,
+            "fileSize": 34651,
+            "id": "spring-ai-qdrant"
+        },
+        {
+            "description": "spring-ai-hanadb-store",
+            "fileCount": 8,
+            "fileSize": 22451,
+            "id": "spring-ai-hanadb-store"
+        },
+        {
+            "description": "spring-ai-bedrock",
+            "fileCount": 49,
+            "fileSize": 279623,
+            "id": "spring-ai-bedrock"
+        },
+        {
+            "description": "spring-ai-gemfire",
+            "fileCount": 2,
+            "fileSize": 21891,
+            "id": "spring-ai-gemfire"
+        },
+        {
+            "description": "spring-ai-retry",
+            "fileCount": 3,
+            "fileSize": 5431,
+            "id": "spring-ai-retry"
+        },
+        {
+            "description": "spring-ai-vertex-ai-palm2",
+            "fileCount": 11,
+            "fileSize": 54728,
+            "id": "spring-ai-vertex-ai-palm2"
+        },
+        {
+            "description": "spring-ai-cassandra",
+            "fileCount": 7,
+            "fileSize": 90622,
+            "id": "spring-ai-cassandra"
+        },
+        {
+            "description": "spring-ai-spring-boot-testcontainers",
+            "fileCount": 12,
+            "fileSize": 35202,
+            "id": "spring-ai-spring-boot-testcontainers"
+        },
+        {
+            "description": "spring-ai-azure",
+            "fileCount": 4,
+            "fileSize": 40370,
+            "id": "spring-ai-azure"
+        },
+        {
+            "description": "spring-ai-azure-openai",
+            "fileCount": 17,
+            "fileSize": 88015,
+            "id": "spring-ai-azure-openai"
+        },
+        {
+            "description": "spring-ai-chroma",
+            "fileCount": 7,
+            "fileSize": 47095,
+            "id": "spring-ai-chroma"
+        },
+        {
+            "description": "spring-ai-mistral-ai",
+            "fileCount": 18,
+            "fileSize": 109079,
+            "id": "spring-ai-mistral-ai"
+        },
+        {
+            "description": "spring-ai-vertex-ai-gemini",
+            "fileCount": 10,
+            "fileSize": 52356,
+            "id": "spring-ai-vertex-ai-gemini"
+        },
+        {
+            "description": "spring-ai-neo4j-store",
+            "fileCount": 4,
+            "fileSize": 33698,
+            "id": "spring-ai-neo4j-store"
+        },
+        {
+            "description": "spring-ai-core",
+            "fileCount": 152,
+            "fileSize": 483667,
+            "id": "spring-ai-core"
+        },
+        {
+            "description": "spring-ai-openai",
+            "fileCount": 64,
+            "fileSize": 316162,
+            "id": "spring-ai-openai"
+        },
+        {
+            "description": "spring-ai-mongodb-atlas-store",
+            "fileCount": 7,
+            "fileSize": 31349,
+            "id": "spring-ai-mongodb-atlas-store"
+        },
+        {
+            "description": "spring-ai-spring-boot-autoconfigure",
+            "fileCount": 168,
+            "fileSize": 550300,
+            "id": "spring-ai-spring-boot-autoconfigure"
+        },
+        {
+            "description": "spring-ai-pgvector-store",
+            "fileCount": 3,
+            "fileSize": 28633,
+            "id": "spring-ai-pgvector-store"
+        },
+        {
+            "description": "spring-ai-huggingface",
+            "fileCount": 3,
+            "fileSize": 8294,
+            "id": "spring-ai-huggingface"
+        },
+        {
+            "description": "spring-ai-redis",
+            "fileCount": 4,
+            "fileSize": 36706,
+            "id": "spring-ai-redis"
+        }
+    ]
+}
