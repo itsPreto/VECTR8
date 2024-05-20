@@ -124,11 +124,11 @@ const Overlay = ({ showOverlay, handleToggleOverlay }) => {
 
         const { x, y } = graphNode;
 
-        graphRef.current.zoom(1, 1000);
+        graphRef.current.zoom(1, 300);
         setTimeout(() => {
-            graphRef.current.centerAt(x, y, 1000);
+            graphRef.current.centerAt(x, y, 400);
             setTimeout(() => {
-                graphRef.current.zoom(7, 1000);
+                graphRef.current.zoom(20, 800);
             }, 200);
         }, 1000);
     }
@@ -207,6 +207,8 @@ const Overlay = ({ showOverlay, handleToggleOverlay }) => {
                             ref={graphRef}
                             nodeRelSize={5}
                             linkWidth={5.5}
+                            width={graphContainerRef.current? graphContainerRef.current.clientWidth : 1300}
+                            height={graphContainerRef.current? graphContainerRef.current.clientHeight : 400}
                             linkDirectionalArrowLength={10}
                             graphData={graphData}
                             nodeAutoColorBy="color"
