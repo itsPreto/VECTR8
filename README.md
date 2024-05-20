@@ -41,8 +41,8 @@
 
 -----
 
+![VECTR8-demo-ezgif com-video-to-gif-converter](https://github.com/itsPreto/VECTR8/assets/45348368/200c084c-443b-4206-b88d-931c38cf40d6)
 
-https://github.com/itsPreto/VECTR8/assets/45348368/e9a73466-e103-4e92-af76-3dd69e5057cd
 
 
 ## Prerequisites
