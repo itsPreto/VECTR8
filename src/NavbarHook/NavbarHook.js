@@ -65,7 +65,7 @@ const NavbarHook = () => {
     <header className="header">
       <nav className="nav container">    
         <NavLink to="/" className="nav__logo" style={{ paddingTop: "0px", paddingRight: "46px", paddingBottom: "0px", paddingLeft: "46px",color: "#1bcaff", backgroundColor: '#333333' }}>
-          ElleGr
+          VECT.R8
         </NavLink>
 
         {isMobile && (
