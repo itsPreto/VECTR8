@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import NavbarHook from "./NavbarHook/NavbarHook";
 import Upload from "./pages/Upload";
-import Preview from "./pages/Preview";
+import Preview from "./pages/preview/Preview";
 import Embed from "./pages/Embed";
 import Query from "./pages/Query";
 import './App.css';
