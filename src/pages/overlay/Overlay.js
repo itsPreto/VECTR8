@@ -2,7 +2,6 @@ import React, { useRef, useState, useCallback, useEffect } from "react";
 import ForceGraph2D from 'react-force-graph-2d';
 import screenfull from 'screenfull';
 import * as d3 from 'd3-force';
-import { motion } from 'framer-motion';
 import './Overlay.css';
 
 const Overlay = ({ showOverlay, handleToggleOverlay }) => {
@@ -10,6 +9,7 @@ const Overlay = ({ showOverlay, handleToggleOverlay }) => {
     const graphContainerRef = useRef();
     const [currentIndex, setCurrentIndex] = useState(0);
     const [traversalOrder, setTraversalOrder] = useState([]);
+    const autoNavRef = useRef(null);
 
     const mindmapData = [
         { id: 'root', label: 'Embeddings Dimensions', parent: null, color: '#ffffff' },
@@ -37,7 +37,7 @@ const Overlay = ({ showOverlay, handleToggleOverlay }) => {
         { id: 'classification-detail1', label: 'Lead to more accurate classification of text', parent: 'classification', color: '#ff9966' },
         { id: 'classification-detail2', label: 'Improved sentiment analysis', parent: 'classification', color: '#ff9966' },
         { id: 'classification-example', label: 'Example: Classifying customer reviews', parent: 'classification', color: '#ff9966' },
-        { id: 'embedding-dimensionality', label: 'EMBEDDING DIMENSIONALITY', parent: 'root', color: '#ff9966' },
+        { id: 'embedding-dimensionality', label: 'EMBEDDING DIMENSIONALITY', parent: '', color: '#ffffff' },
         { id: 'model-architecture', label: 'Model Architecture and Training Objectives', parent: 'embedding-dimensionality', color: '#ffcc99' },
         { id: 'model-architecture-detail1', label: 'Different models have unique designs that dictate dimensions', parent: 'model-architecture', color: '#ffcc99' },
         { id: 'model-architecture-example1', label: 'BERT (768 dimensions)', parent: 'model-architecture', color: '#ffcc99' },
@@ -88,16 +88,37 @@ const Overlay = ({ showOverlay, handleToggleOverlay }) => {
         children.forEach(childId => traverseGraph(childId, graph, visited));
     };
 
-    useEffect(() => {
+    const startAutoNavigation = (rootId) => {
+        if (autoNavRef.current) {
+            clearInterval(autoNavRef.current);
+        }
+
         const graph = {
             nodes: mindmapData.map(node => ({ id: node.id, name: node.label, color: node.color })),
             links: mindmapData.filter(node => node.parent).map(node => ({ source: node.parent, target: node.id }))
         };
 
         const visited = [];
-        traverseGraph('root', graph, visited);
+        traverseGraph(rootId, graph, visited);
         setTraversalOrder(visited);
-    }, []);
+        setCurrentIndex(0);
+
+        autoNavRef.current = setInterval(() => {
+            setCurrentIndex(prevIndex => {
+                const nextIndex = (prevIndex + 1) % visited.length;
+                const nodeKey = visited[nextIndex];
+                const node = mindmapData.find(n => n.id === nodeKey);
+                if (node && graphRef.current) {
+                    moveCameraToNode(node);
+                }
+                if (nextIndex === 0) {
+                    clearInterval(autoNavRef.current);
+                    graphRef.current.zoomToFit(400);
+                }
+                return nextIndex;
+            });
+        }, 1500);
+    };
 
     const navigateGraph = (direction) => {
         let newIndex = currentIndex;
@@ -109,8 +130,6 @@ const Overlay = ({ showOverlay, handleToggleOverlay }) => {
 
         const nodeKey = traversalOrder[newIndex];
         const node = mindmapData.find(n => n.id === nodeKey);
-
-        console.log(node);
 
         if (node && graphRef.current) {
             moveCameraToNode(node);
@@ -147,6 +166,19 @@ const Overlay = ({ showOverlay, handleToggleOverlay }) => {
         }
     }, []);
 
+    function focusOnNode(nodeId) {
+        if (graphRef.current) {
+            const graphNode = graphData.nodes.find(n => n.id === nodeId);
+            if (!graphNode) return;
+
+            const { x, y } = graphNode;
+            graphRef.current.centerAt(x, y - 10, 400);
+            setTimeout(() => {
+                graphRef.current.zoom(20, 800);
+            }, 200);
+        }
+    }
+
     useEffect(() => {
         if (graphContainerRef.current) {
             const resizeObserver = new ResizeObserver(handleResize);
@@ -161,7 +193,8 @@ const Overlay = ({ showOverlay, handleToggleOverlay }) => {
             const simulation = d3.forceSimulation(graphData.nodes)
                 .force('link', d3.forceLink(graphData.links).id(d => d.id))
                 .force('charge', d3.forceManyBody())
-                .force('center', d3.forceCenter(0, 0));
+                .force('center', d3.forceCenter(0, 0))
+                .force('repel', d3.forceManyBody().strength(d => (d.id === 'root' || d.parent === 'embedding-dimensionality') ? -300 : -100));
 
             simulation.on('tick', () => {
                 if (graphRef.current) {
@@ -189,7 +222,7 @@ const Overlay = ({ showOverlay, handleToggleOverlay }) => {
                         { title: "Diversity Measurement", description: "Quantify the diversity of vectors in the embedding space", icon: "📊" },
                         { title: "Classification", description: "Classify vectors into predefined categories based on their embeddings", icon: "🏷️" },
                     ].map((feature, index) => (
-                        <div key={index} className="featureCard">
+                        <div key={index} className="featureCard" onClick={() => focusOnNode(feature.title.toLowerCase().replace(' ', '-'))}>
                             <div className="featureIcon">{feature.icon}</div>
                             <div className="featureTitle">{feature.title}</div>
                             <div className="featureDescription">{feature.description}</div>
@@ -207,9 +240,10 @@ const Overlay = ({ showOverlay, handleToggleOverlay }) => {
                             ref={graphRef}
                             nodeRelSize={5}
                             linkWidth={5.5}
-                            width={graphContainerRef.current? graphContainerRef.current.clientWidth : 1300}
-                            height={graphContainerRef.current? graphContainerRef.current.clientHeight : 400}
+                            width={graphContainerRef.current ? graphContainerRef.current.clientWidth : 1300}
+                            height={graphContainerRef.current ? graphContainerRef.current.clientHeight : 400}
                             linkDirectionalArrowLength={10}
+                            backgroundColor="#222222"
                             graphData={graphData}
                             nodeAutoColorBy="color"
                             onNodeDragEnd={node => {
@@ -228,16 +262,34 @@ const Overlay = ({ showOverlay, handleToggleOverlay }) => {
                                 const textWidth = ctx.measureText(label).width;
                                 const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 1.6); // some padding
 
-                                ctx.fillStyle = 'rgba(15, 15, 15, 0.80)';
-                                ctx.fillRect(node.x - bckgDimensions[0] / 2, node.y - bckgDimensions[1] / 2, ...bckgDimensions);
-
                                 ctx.textAlign = 'center';
                                 ctx.textBaseline = 'middle';
                                 ctx.fillStyle = node.color;
-                                ctx.fillText(label, node.x, node.y);
+
+                                // Wrap text at 100px width
+                                const words = label.split(' ');
+                                let line = '';
+                                const lines = [];
+                                const lineHeight = fontSize * 1.2;
+                                words.forEach(word => {
+                                    const testLine = line + word + ' ';
+                                    const testWidth = ctx.measureText(testLine).width;
+                                    if (testWidth > 100) {
+                                        lines.push(line);
+                                        line = word + ' ';
+                                    } else {
+                                        line = testLine;
+                                    }
+                                });
+                                lines.push(line);
+
+                                lines.forEach((line, i) => {
+                                    ctx.fillText(line, node.x, node.y - (lines.length - 1) * lineHeight / 2 + i * lineHeight);
+                                });
 
                                 node.__bckgDimensions = bckgDimensions; // to re-use in nodePointerAreaPaint
                             }}
+
                             nodePointerAreaPaintExtend={6}
                             nodePointerAreaPaint={(node, color, ctx) => {
                                 ctx.fillStyle = color;
