@@ -1,4 +1,4 @@
-<h1 align="center">Vect.r8 (Vector Embeddings Creation, Transformation & Retrieval) 🚀</h1>
+<h1 align="center">VECT.R8 (Vector Embeddings Creation, Transformation & Retrieval) 🚀</h1>
 
 <p align="center">
   <img src="./src/assets/logo.png" alt="logo" />
