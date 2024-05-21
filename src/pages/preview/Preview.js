@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { JSONTree } from "react-json-tree";
 import { motion } from 'framer-motion';
 import Overlay from '../overlay/Overlay';
+import Embed from '../Embed'; // Import Embed component
 import './Preview.css';
 
 const customTheme = {
@@ -25,25 +26,33 @@ const customTheme = {
   base0F: '#E91E63',
 };
 
-const Preview = ({ previewData, filePath, fileName, fileSize }) => {
+const Preview = ({ previewData, filePath, fileSize }) => {
   const [selectedKeys, setSelectedKeys] = useState(() => {
-    return JSON.parse(localStorage.getItem('selectedKeys')) || [];
+    const savedKeys = localStorage.getItem('selectedKeys');
+    return savedKeys ? JSON.parse(savedKeys) : [];
   });
+
   const [document, setDocument] = useState(() => {
-    return JSON.parse(localStorage.getItem('document')) || {};
+    const savedDocument = localStorage.getItem('document');
+    return savedDocument ? JSON.parse(savedDocument) : {};
   });
+
   const [embeddings, setEmbeddings] = useState(() => {
-    return JSON.parse(localStorage.getItem('embeddings')) || null;
+    const savedEmbeddings = localStorage.getItem('embeddings');
+    return savedEmbeddings ? JSON.parse(savedEmbeddings) : null;
   });
+
   const [tokenCount, setTokenCount] = useState(null);
   const [filterText, setFilterText] = useState("");
   const [showOverlay, setShowOverlay] = useState(false);
+  const [showEmbed, setShowEmbed] = useState(false);
 
   useEffect(() => {
+    console.log("selectedKeys:", selectedKeys);
     if (selectedKeys.length > 0) {
       updatePreviews();
     }
-  }, [selectedKeys]);
+  }, [selectedKeys, filePath]);
 
   useEffect(() => {
     localStorage.setItem('selectedKeys', JSON.stringify(selectedKeys));
@@ -192,6 +201,7 @@ const Preview = ({ previewData, filePath, fileName, fileSize }) => {
         </div>
       </div>
       <Overlay showOverlay={showOverlay} handleToggleOverlay={handleToggleOverlay} />
+      {showEmbed && <Embed selectedKeys={selectedKeys} filePath={filePath} />}
     </section>
   );
 };

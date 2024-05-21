@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
-const Embed = ({ selectedKeys, filePath }) => {
+const Embed = () => {
+  const location = useLocation();
+  const [selectedKeys, setSelectedKeys] = useState([]);
+  const [filePath, setFilePath] = useState(null);
   const [progress, setProgress] = useState(0);
   const [isVectorDbExisting, setIsVectorDbExisting] = useState(false);
   const [totalDocuments, setTotalDocuments] = useState(0);
@@ -9,9 +13,18 @@ const Embed = ({ selectedKeys, filePath }) => {
   const [selectedDb, setSelectedDb] = useState(null);
 
   useEffect(() => {
-    checkVectorDb();
-    fetchAvailableDatabases();
+    const storedSelectedKeys = JSON.parse(localStorage.getItem('selectedKeys'));
+    const storedFilePath = localStorage.getItem('fileInfo');
+    setSelectedKeys(storedSelectedKeys || []);
+    setFilePath(storedFilePath || null);
   }, []);
+
+  useEffect(() => {
+    if (selectedKeys && filePath) {
+      checkVectorDb();
+      fetchAvailableDatabases();
+    }
+  }, [selectedKeys, filePath]);
 
   const fetchAvailableDatabases = async () => {
     try {
@@ -45,6 +58,8 @@ const Embed = ({ selectedKeys, filePath }) => {
       console.error('File path or selected keys are missing');
       return;
     }
+    console.log("selected_keys:", selectedKeys);
+    console.log("file_path:", filePath);
     try {
       const response = await fetch('http://10.0.0.252:4000/create_vector_database', {
         method: 'POST',
@@ -52,7 +67,7 @@ const Embed = ({ selectedKeys, filePath }) => {
         body: JSON.stringify({ file_path: filePath, selected_keys: selectedKeys }),
       });
       if (response.ok) {
-        checkVectorDb();
+        console.log("Vector database created successfully");
       } else {
         console.error('Error creating vector database');
       }

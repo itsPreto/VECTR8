@@ -4,7 +4,7 @@ import { IoClose, IoMenu } from "react-icons/io5";
 import { useMediaQuery } from "react-responsive";
 import "./NavbarHook.css";
 
-const NavbarHook = () => {
+const NavbarHook = ({ selectedKeys, filePath }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isMobile = useMediaQuery({ maxWidth: "1150px" });
 
@@ -41,7 +41,10 @@ const NavbarHook = () => {
         </li>
         <li>
           <NavLink
-            to="/embed"
+            to={{
+              pathname: "/embed",
+              state: { selectedKeys, filePath } // Pass state here
+            }}
             className={linkClassName}
             onClick={closeMobileMenu}
           >
@@ -64,7 +67,7 @@ const NavbarHook = () => {
   return (
     <header className="header">
       <nav className="nav container">    
-        <NavLink to="/" className="nav__logo" style={{ paddingTop: "0px", paddingRight: "46px", paddingBottom: "0px", paddingLeft: "46px",color: "#1bcaff", backgroundColor: '#333333' }}>
+        <NavLink to="/" className="nav__logo" style={{ paddingTop: "0px", paddingRight: "46px", paddingBottom: "0px", paddingLeft: "46px", color: "#1bcaff", backgroundColor: '#333333' }}>
           VECT.R8
         </NavLink>
 

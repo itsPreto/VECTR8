@@ -112,7 +112,6 @@ class MBedFastAF:
 
 db_path = os.path.join(os.path.dirname(__file__), 'public', 'databases')
 
-
 def extract_keys_from_json(data, parent_key=''):
     keys = {}
     if isinstance(data, list):
@@ -126,7 +125,6 @@ def extract_keys_from_json(data, parent_key=''):
             else:
                 keys[full_key] = type(v).__name__
     return keys
-
 
 def trim_chat_history():
     total_tokens = sum(len(message['content'].split()) for message in chat_history)
@@ -145,7 +143,6 @@ def extract_texts_from_csv(df, keys):
                 return jsonify({'error': f'Column "{key}" not found in CSV file'}), 400
         documents.append(doc)
     return documents
-
 
 def extract_texts_from_json(data, keys):
     documents = []
@@ -210,7 +207,6 @@ def preview_document():
 
     return jsonify({"document": document, "embeddings": embeddings.tolist(), "token_count": token_count})
 
-
 @app.route('/create_vector_database', methods=['POST'])
 def create_vector_database():
     global current_progress, library
@@ -219,6 +215,10 @@ def create_vector_database():
     file_path = data.get('file_path')
     selected_keys = data.get('selected_keys', [])
 
+    print("Selected keys: ", selected_keys)
+    print("File path: ", file_path)
+    
+    
     if not file_path or not os.path.exists(file_path):
         return jsonify({'error': 'Invalid file path'}), 400
 
@@ -310,7 +310,6 @@ def delete_db():
         return '', 200
     else:
         return jsonify({'error': 'Database not found'}), 404
-    
 
 @app.route('/upload_file', methods=['POST'])
 def upload_file():
@@ -433,7 +432,6 @@ def list_uploads():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-
 @app.route('/progress', methods=['GET'])
 def progress():
     global db_filename
@@ -501,7 +499,6 @@ def merge_files():
 
     return jsonify({'file': merged_file}), 200
 
-
 @app.route('/chatbot_format', methods=['POST'])
 def chatbot_format():
     data = request.get_json()
@@ -544,7 +541,6 @@ def chatbot_format():
         trim_chat_history()
 
     return Response(stream_with_context(generate()), content_type='text/event-stream')
-
 
 if __name__ == '__main__':
     upload_folder = 'uploads'

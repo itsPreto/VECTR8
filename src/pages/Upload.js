@@ -16,6 +16,7 @@ const Upload = ({ onPreviewData }) => {
     const [file, setFile] = useState(() => JSON.parse(localStorage.getItem('file')) || null);
     const [fileInfo, setFileInfo] = useState(() => localStorage.getItem('fileInfo') || null);
     const [datasets, setDatasets] = useState(() => JSON.parse(localStorage.getItem('datasets')) || []);
+    const [selectedKeys, setSelectedKeys] = useState(() => JSON.parse(localStorage.getItem('selectedKeys')) || []);
     const [isDragging, setIsDragging] = useState(false);
     const [uploadSuccess, setUploadSuccess] = useState(() => JSON.parse(localStorage.getItem('uploadSuccess')) || false);
     const [loading, setLoading] = useState(false);
@@ -66,6 +67,10 @@ const Upload = ({ onPreviewData }) => {
         localStorage.setItem('datasets', JSON.stringify(datasets));
     }, [datasets]);
 
+    useEffect(() => {
+        localStorage.setItem('selectedKeys', JSON.stringify(selectedKeys));
+    }, [selectedKeys]);
+
     const fetchDatasets = async () => {
         setLoading(true);
         try {
@@ -107,6 +112,8 @@ const Upload = ({ onPreviewData }) => {
                 setFileInfo(filePath);
                 fetchPreviewData(filePath);
                 setUploadSuccess(true);
+                setSelectedKeys([]); // Clear selected keys
+                localStorage.removeItem('selectedKeys'); // Clear local storage
             } else {
                 alert(result.error);
             }
@@ -139,6 +146,8 @@ const Upload = ({ onPreviewData }) => {
 
     const handleDatasetClick = (filePath) => {
         setFileInfo(filePath);
+        setSelectedKeys([]); // Clear out the previous list of selected keys
+        localStorage.removeItem('selectedKeys'); // Clear out local storage
         fetchPreviewData(filePath);
     };
 
