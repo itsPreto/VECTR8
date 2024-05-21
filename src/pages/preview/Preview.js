@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { JSONTree } from "react-json-tree";
 import { motion } from 'framer-motion';
-import screenfull from 'screenfull';
 import Overlay from '../overlay/Overlay';
 import './Preview.css';
 
@@ -27,9 +26,15 @@ const customTheme = {
 };
 
 const Preview = ({ previewData, filePath, fileName, fileSize }) => {
-  const [selectedKeys, setSelectedKeys] = useState([]);
-  const [document, setDocument] = useState({});
-  const [embeddings, setEmbeddings] = useState(null);
+  const [selectedKeys, setSelectedKeys] = useState(() => {
+    return JSON.parse(localStorage.getItem('selectedKeys')) || [];
+  });
+  const [document, setDocument] = useState(() => {
+    return JSON.parse(localStorage.getItem('document')) || {};
+  });
+  const [embeddings, setEmbeddings] = useState(() => {
+    return JSON.parse(localStorage.getItem('embeddings')) || null;
+  });
   const [tokenCount, setTokenCount] = useState(null);
   const [filterText, setFilterText] = useState("");
   const [showOverlay, setShowOverlay] = useState(false);
@@ -39,6 +44,18 @@ const Preview = ({ previewData, filePath, fileName, fileSize }) => {
       updatePreviews();
     }
   }, [selectedKeys]);
+
+  useEffect(() => {
+    localStorage.setItem('selectedKeys', JSON.stringify(selectedKeys));
+  }, [selectedKeys]);
+
+  useEffect(() => {
+    localStorage.setItem('document', JSON.stringify(document));
+  }, [document]);
+
+  useEffect(() => {
+    localStorage.setItem('embeddings', JSON.stringify(embeddings));
+  }, [embeddings]);
 
   const handleKeySelection = (key) => {
     setSelectedKeys((prevKeys) =>

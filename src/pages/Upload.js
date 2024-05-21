@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import md5 from 'md5';
 
 import csvIcon from '../assets/csv-logo.svg';
 import jsonIcon from '../assets/json-logo.svg';
@@ -12,25 +13,27 @@ import pdfIcon from '../assets/pdf-logo.svg';
 import videoIcon from '../assets/video-logo.svg';
 
 const Upload = ({ onPreviewData }) => {
-    const [file, setFile] = useState(null);
-    const [fileInfo, setFileInfo] = useState(null);
-    const [datasets, setDatasets] = useState([]);
+    const [file, setFile] = useState(() => JSON.parse(localStorage.getItem('file')) || null);
+    const [fileInfo, setFileInfo] = useState(() => localStorage.getItem('fileInfo') || null);
+    const [datasets, setDatasets] = useState(() => JSON.parse(localStorage.getItem('datasets')) || []);
     const [isDragging, setIsDragging] = useState(false);
-    const [uploadSuccess, setUploadSuccess] = useState(false);
+    const [uploadSuccess, setUploadSuccess] = useState(() => JSON.parse(localStorage.getItem('uploadSuccess')) || false);
     const [loading, setLoading] = useState(false);
     const [dataWizardLoading, setDataWizardLoading] = useState(false);
     const [wizardFile, setWizardFile] = useState(null);
     const [wizardFileInfo, setWizardFileInfo] = useState(null);
     const [wizardResponse, setWizardResponse] = useState(null);
-    const [chatMessages, setChatMessages] = useState([]);
-    const [chatInput, setChatInput] = useState("");
+    const [chatMessages, setChatMessages] = useState(() => JSON.parse(localStorage.getItem('chatMessages')) || []);
+    const [chatInput, setChatInput] = useState(() => localStorage.getItem('chatInput') || "");
     const chatWindowRef = useRef(null);
     const [isAutoScrollEnabled, setIsAutoScrollEnabled] = useState(true);
 
-    const navigate = useNavigate(); // Add useNavigate hook
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchDatasets();
+        const interval = setInterval(fetchDatasets, 30000); // Poll every 30 seconds
+        return () => clearInterval(interval); // Cleanup on unmount
     }, []);
 
     useEffect(() => {
@@ -39,15 +42,45 @@ const Upload = ({ onPreviewData }) => {
         }
     }, [chatMessages]);
 
+    useEffect(() => {
+        localStorage.setItem('file', JSON.stringify(file));
+    }, [file]);
+
+    useEffect(() => {
+        localStorage.setItem('fileInfo', fileInfo);
+    }, [fileInfo]);
+
+    useEffect(() => {
+        localStorage.setItem('uploadSuccess', JSON.stringify(uploadSuccess));
+    }, [uploadSuccess]);
+
+    useEffect(() => {
+        localStorage.setItem('chatMessages', JSON.stringify(chatMessages));
+    }, [chatMessages]);
+
+    useEffect(() => {
+        localStorage.setItem('chatInput', chatInput);
+    }, [chatInput]);
+
+    useEffect(() => {
+        localStorage.setItem('datasets', JSON.stringify(datasets));
+    }, [datasets]);
+
     const fetchDatasets = async () => {
         setLoading(true);
         try {
             const response = await fetch('http://10.0.0.252:4000/list_uploads');
-            const datasets = await response.json();
+            const newDatasets = await response.json();
             if (response.ok) {
-                setDatasets(datasets);
+                const newChecksum = md5(JSON.stringify(newDatasets));
+                const cachedChecksum = localStorage.getItem('datasetsChecksum');
+                
+                if (newChecksum !== cachedChecksum) {
+                    setDatasets(newDatasets);
+                    localStorage.setItem('datasetsChecksum', newChecksum);
+                }
             } else {
-                alert(datasets.error);
+                alert(newDatasets.error);
             }
         } catch (error) {
             console.error('Error fetching datasets:', error);
@@ -70,7 +103,7 @@ const Upload = ({ onPreviewData }) => {
             });
             const result = await response.json();
             if (response.ok) {
-                const filePath = `./public/uploads/${result.file_path}`;
+                const filePath = `./public/uploads/${result}`;
                 setFileInfo(filePath);
                 fetchPreviewData(filePath);
                 setUploadSuccess(true);
@@ -105,6 +138,7 @@ const Upload = ({ onPreviewData }) => {
     };
 
     const handleDatasetClick = (filePath) => {
+        setFileInfo(filePath);
         fetchPreviewData(filePath);
     };
 
@@ -327,20 +361,9 @@ const Upload = ({ onPreviewData }) => {
                         {datasets.map((dataset, index) => {
                             const fileExtension = dataset.name.split('.').pop().toLowerCase();
                             return (
-                                <li key={index} style={{
-                                    listStyle: 'none',
-                                    padding: '8px',
-                                    height: "fit-content",
-                                    borderRadius: '8px',
-                                    background: '#fff',
-                                    flexDirection: "column",
-                                    transition: 'background 0.3s ease',
-                                    cursor: 'pointer',
-                                    display: 'flex',
-                                    alignItems: 'center'
-                                }}
-                                    onMouseEnter={e => e.currentTarget.style.background = '#f0f0f0'}
-                                    onMouseLeave={e => e.currentTarget.style.background = '#fff'}
+                                <li 
+                                    className={`datasetListItem ${fileInfo != null && dataset.name === fileInfo ? 'selected' : ''}`}
+                                    key={index}
                                     onClick={() => handleDatasetClick(dataset.name)}
                                 >
                                     {['csv', 'json', 'mp3', 'wav', 'mp4', 'avi', 'jpg', 'jpeg', 'png'].includes(fileExtension) ? (
@@ -493,7 +516,6 @@ const Upload = ({ onPreviewData }) => {
                         ></textarea>
                         <button
                             id="sendButton"
-                            // className="button"
                             style={{ marginLeft: '8px', marginTop: '16px', padding: '8px 16px', background: '#444444', color: '#e4e4e6', border: 'none', borderRadius: '8px' }}
                             onClick={handleSendChat}
                         >

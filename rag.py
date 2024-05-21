@@ -2,7 +2,6 @@ from flask import Flask, request, jsonify, stream_with_context, Response
 from flask_cors import CORS
 from transformers import GPT2Tokenizer
 import logging
-import requests
 import torch
 import numpy as np
 import gzip
@@ -393,6 +392,26 @@ def tsne_progress():
         yield f"data: {json.dumps(result)}\n\n"
 
     return Response(stream_with_context(generate_tsne_progress()), mimetype='text/event-stream')
+
+@app.route('/list_vector_dbs', methods=['GET'])
+def list_vector_dbs():
+    upload_folder = './public/databases'
+    try:
+        files = os.listdir(upload_folder)
+        file_details = []
+        for file in files:
+            file_path = os.path.join(upload_folder, file)
+            if os.path.isfile(file_path):
+                file_info = {
+                    'name': file,
+                    'size': os.path.getsize(file_path),
+                    'upload_date': time.ctime(os.path.getctime(file_path)),
+                    'extension': os.path.splitext(file)[1]
+                }
+                file_details.append(file_info)
+        return jsonify(file_details), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/list_uploads', methods=['GET'])
 def list_uploads():

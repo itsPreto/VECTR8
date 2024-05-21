@@ -2,23 +2,28 @@
 
 .overlay {
     position: fixed;
-    top: 0;
+    top: 100%;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.8);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    transition: all 0.5s ease;
+    transition: all 0.5s ease-in-out;
     opacity: 0;
     visibility: hidden;
+    background-color: transparent; /* Initial background is transparent */
 }
 
 .overlay.active {
+    top: 0;
     opacity: 1;
     visibility: visible;
+}
+
+.overlay.active.delayed-bg {
+    background-color: rgba(0, 0, 0, 0.8); /* Apply background after delay */
 }
 
 .overlayContent {
@@ -30,13 +35,13 @@
     overflow-y: auto;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     position: relative;
-    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-    transform: scale(0.95);
+    transition: all 0.5s ease-in-out;
+    transform: translateY(20px);
     opacity: 0;
 }
 
 .overlayContent.active {
-    transform: scale(1);
+    transform: translateY(0);
     opacity: 1;
 }
 
@@ -54,7 +59,7 @@
     margin-left: 10px;
     text-align: -webkit-center;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: all 0.5s ease-in-out;
     flex-direction: column;
     align-items: center;
 }
@@ -83,9 +88,12 @@
 
 .navigationButtons {
     display: flex;
-    justify-content: center;
     align-items: center;
-    margin: 10px 0;
+    margin-top: -10px;
+    margin-right: 0px;
+    margin-bottom: 10px;
+    margin-left: 0px;
+    justify-content: space-between;
 }
 
 .navButton {
@@ -117,5 +125,21 @@
 
 .fullScreenButton:hover {
     background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+.closeButton {
+    padding: 8px 16px;
+    margin: 0 5px;
+    border-radius: 4px;
+    border: 1px solid #e00000;
+    background-color: #e00000;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.closeButton:hover {
+    background-color: #8d8d8d;
     transform: scale(1.05);
 }

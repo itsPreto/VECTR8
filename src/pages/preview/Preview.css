@@ -112,8 +112,74 @@
     justify-content: center;
     text-align: center;
     flex-flow: nowrap;
-    background-color: rgb(240, 194, 57);
     transition: all 0.3s ease;
+}
+
+.card.selected {
+    background-color: rgb(240, 194, 57);
+}
+
+.preview-column {
+    max-height: 90vh; /* Adjust based on your needs */
+    overflow-y: auto;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.datasetListItem {
+    list-style: none;
+    padding: 8px;
+    height: fit-content;
+    border-radius: 8px;
+    background: #ffffff;
+    flex-direction: column;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.datasetListItem:hover {
+    background-color: #cce5ff
+}
+
+.datasetListItem.selected {
+    background-color: #fae29b;
+}
+
+.heading {
+    text-align: center;
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+}
+
+.card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    text-align: center;
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.card-text {
+    margin: 0;
+    font-weight: bold;
+    color: #333;
+}
+
+.selected {
+    border: 2px solid #007bff;
 }
 
 .card:hover {

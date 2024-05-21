@@ -1,68 +1,25 @@
 import React, { useRef, useState, useCallback, useEffect } from "react";
-import ForceGraph2D from 'react-force-graph-2d';
 import screenfull from 'screenfull';
-import * as d3 from 'd3-force';
+import GraphPage from './graph/Graph';
 import './Overlay.css';
+import mindmapData from '../../utils/mindmapData';
 
 const Overlay = ({ showOverlay, handleToggleOverlay }) => {
     const graphRef = useRef();
     const graphContainerRef = useRef();
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [traversalOrder, setTraversalOrder] = useState([]);
-    const autoNavRef = useRef(null);
+    const [isFullscreen, setIsFullscreen] = useState(false);
 
-    const mindmapData = [
-        { id: 'root', label: 'Embeddings Dimensions', parent: null, color: '#ffffff' },
-        { id: 'search', label: 'SEARCH', parent: 'root', color: '#ffff00' },
-        { id: 'search-detail1', label: 'High-dimensional embeddings improve search accuracy', parent: 'search', color: '#ffff66' },
-        { id: 'search-detail2', label: 'Better relevance ranking for complex queries', parent: 'search', color: '#ffff66' },
-        { id: 'search-example', label: 'Example: Google search engine optimizing results', parent: 'search', color: '#ffff66' },
-        { id: 'clustering', label: 'CLUSTERING', parent: 'root', color: '#daccff' },
-        { id: 'clustering-detail1', label: 'Enable finer distinctions between clusters', parent: 'clustering', color: '#51962e' },
-        { id: 'clustering-detail2', label: 'Improved grouping of semantically similar texts', parent: 'clustering', color: '#2fd12f' },
-        { id: 'clustering-example', label: 'Example: Organizing customer feedback into coherent topics', parent: 'clustering', color: '#6bcf6b' },
-        { id: 'recommendations', label: 'RECOMMENDATIONS', parent: 'root', color: '#cc99ff' },
-        { id: 'recommendations-detail1', label: 'Enhance systems by understanding user preferences better', parent: 'recommendations', color: '#cc99ff' },
-        { id: 'recommendations-detail2', label: 'More accurate and personalized recommendations', parent: 'recommendations', color: '#cc99ff' },
-        { id: 'recommendations-example', label: 'Example: Netflix recommending shows', parent: 'recommendations', color: '#cc99ff' },
-        { id: 'anomaly-detection', label: 'ANOMALY DETECTION', parent: 'root', color: '#ff99ff' },
-        { id: 'anomaly-detection-detail1', label: 'Improve detection of subtle anomalies', parent: 'anomaly-detection', color: '#ff99ff' },
-        { id: 'anomaly-detection-detail2', label: 'Better identification of outliers', parent: 'anomaly-detection', color: '#ff99ff' },
-        { id: 'anomaly-detection-example', label: 'Example: Fraud detection in financial transactions', parent: 'anomaly-detection', color: '#ff99ff' },
-        { id: 'diversity-measurement', label: 'DIVERSITY MEASUREMENT', parent: 'root', color: '#ff6699' },
-        { id: 'diversity-measurement-detail1', label: 'Provide a detailed measure of diversity', parent: 'diversity-measurement', color: '#ff6699' },
-        { id: 'diversity-measurement-detail2', label: 'Better analysis of similarity distributions in datasets', parent: 'diversity-measurement', color: '#ff6699' },
-        { id: 'diversity-measurement-example', label: 'Example: Assessing diversity in hiring practices', parent: 'diversity-measurement', color: '#ff6699' },
-        { id: 'classification', label: 'CLASSIFICATION', parent: 'root', color: '#ff9966' },
-        { id: 'classification-detail1', label: 'Lead to more accurate classification of text', parent: 'classification', color: '#ff9966' },
-        { id: 'classification-detail2', label: 'Improved sentiment analysis', parent: 'classification', color: '#ff9966' },
-        { id: 'classification-example', label: 'Example: Classifying customer reviews', parent: 'classification', color: '#ff9966' },
-        { id: 'embedding-dimensionality', label: 'EMBEDDING DIMENSIONALITY', parent: '', color: '#ffffff' },
-        { id: 'model-architecture', label: 'Model Architecture and Training Objectives', parent: 'embedding-dimensionality', color: '#ffcc99' },
-        { id: 'model-architecture-detail1', label: 'Different models have unique designs that dictate dimensions', parent: 'model-architecture', color: '#ffcc99' },
-        { id: 'model-architecture-example1', label: 'BERT (768 dimensions)', parent: 'model-architecture', color: '#ffcc99' },
-        { id: 'model-architecture-example2', label: 'GPT-3 (2048 dimensions)', parent: 'model-architecture', color: '#ffcc99' },
-        { id: 'task-specific-training', label: 'Task-Specific Training', parent: 'embedding-dimensionality', color: '#ffcc99' },
-        { id: 'task-specific-training-detail1', label: 'Complex tasks often require higher dimensions for nuanced understanding', parent: 'task-specific-training', color: '#ffcc99' },
-        { id: 'capacity-expressiveness', label: 'Capacity and Expressiveness', parent: 'embedding-dimensionality', color: '#ffcc99' },
-        { id: 'higher-dimensionality', label: 'Higher Dimensionality', parent: 'capacity-expressiveness', color: '#ffcc99' },
-        { id: 'higher-dimensionality-detail1', label: 'Captures more detailed information', parent: 'higher-dimensionality', color: '#ffcc99' },
-        { id: 'higher-dimensionality-detail2', label: 'Essential for tasks requiring deep semantic understanding', parent: 'higher-dimensionality', color: '#ffcc99' },
-        { id: 'lower-dimensionality', label: 'Lower Dimensionality', parent: 'capacity-expressiveness', color: '#ffcc99' },
-        { id: 'lower-dimensionality-detail1', label: 'Sufficient for simpler tasks', parent: 'lower-dimensionality', color: '#ffcc99' },
-        { id: 'lower-dimensionality-detail2', label: 'Reduces computational cost but may miss finer details', parent: 'lower-dimensionality', color: '#ffcc99' },
-        { id: 'computational-efficiency', label: 'Computational Efficiency', parent: 'embedding-dimensionality', color: '#ffcc99' },
-        { id: 'memory-storage', label: 'Memory and Storage', parent: 'computational-efficiency', color: '#ffcc99' },
-        { id: 'memory-storage-detail1', label: 'Higher dimensions require more memory and storage', parent: 'memory-storage', color: '#ffcc99' },
-        { id: 'memory-storage-detail2', label: 'Impacts scalability', parent: 'memory-storage', color: '#ffcc99' },
-        { id: 'processing-time', label: 'Processing Time', parent: 'computational-efficiency', color: '#ffcc99' },
-        { id: 'processing-time-detail1', label: 'Higher dimensions increase computational load', parent: 'processing-time', color: '#ffcc99' },
-        { id: 'processing-time-detail2', label: 'Affects real-time application performance', parent: 'processing-time', color: '#ffcc99' }
-    ];
+    const graphData = {
+        nodes: mindmapData.map(node => ({ id: node.id, name: node.label, color: node.color })),
+        links: mindmapData
+            .filter(node => node.parent)
+            .map(node => ({ source: node.parent, target: node.id }))
+    };
 
     useEffect(() => {
         if (screenfull.isEnabled) {
             screenfull.on('change', () => {
+                setIsFullscreen(screenfull.isFullscreen);
                 handleResize();
             });
         }
@@ -73,90 +30,23 @@ const Overlay = ({ showOverlay, handleToggleOverlay }) => {
         };
     }, []);
 
+    useEffect(() => {
+        let bgTimeout;
+        if (showOverlay) {
+            bgTimeout = setTimeout(() => {
+                document.querySelector('.overlay').classList.add('delayed-bg');
+            }, 500);
+        } else {
+            document.querySelector('.overlay').classList.remove('delayed-bg');
+        }
+
+        return () => clearTimeout(bgTimeout);
+    }, [showOverlay]);
+
     const handleToggleFullScreen = () => {
         if (screenfull.isEnabled) {
             screenfull.toggle(graphContainerRef.current);
         }
-    };
-
-    const traverseGraph = (nodeId, graph, visited) => {
-        const node = graph.nodes.find(n => n.id === nodeId);
-        if (!node || visited.includes(nodeId)) return;
-
-        visited.push(nodeId);
-        const children = graph.links.filter(link => link.source === nodeId).map(link => link.target);
-        children.forEach(childId => traverseGraph(childId, graph, visited));
-    };
-
-    const startAutoNavigation = (rootId) => {
-        if (autoNavRef.current) {
-            clearInterval(autoNavRef.current);
-        }
-
-        const graph = {
-            nodes: mindmapData.map(node => ({ id: node.id, name: node.label, color: node.color })),
-            links: mindmapData.filter(node => node.parent).map(node => ({ source: node.parent, target: node.id }))
-        };
-
-        const visited = [];
-        traverseGraph(rootId, graph, visited);
-        setTraversalOrder(visited);
-        setCurrentIndex(0);
-
-        autoNavRef.current = setInterval(() => {
-            setCurrentIndex(prevIndex => {
-                const nextIndex = (prevIndex + 1) % visited.length;
-                const nodeKey = visited[nextIndex];
-                const node = mindmapData.find(n => n.id === nodeKey);
-                if (node && graphRef.current) {
-                    moveCameraToNode(node);
-                }
-                if (nextIndex === 0) {
-                    clearInterval(autoNavRef.current);
-                    graphRef.current.zoomToFit(400);
-                }
-                return nextIndex;
-            });
-        }, 1500);
-    };
-
-    const navigateGraph = (direction) => {
-        let newIndex = currentIndex;
-        if (direction === 'next') {
-            newIndex = (currentIndex + 1) % traversalOrder.length;
-        } else if (direction === 'prev') {
-            newIndex = (currentIndex - 1 + traversalOrder.length) % traversalOrder.length;
-        }
-
-        const nodeKey = traversalOrder[newIndex];
-        const node = mindmapData.find(n => n.id === nodeKey);
-
-        if (node && graphRef.current) {
-            moveCameraToNode(node);
-            setCurrentIndex(newIndex);
-        }
-    };
-
-    function moveCameraToNode(node) {
-        const graphNode = graphData.nodes.find(n => n.id === node.id);
-        if (!graphNode) return;
-
-        const { x, y } = graphNode;
-
-        graphRef.current.zoom(1, 300);
-        setTimeout(() => {
-            graphRef.current.centerAt(x, y, 400);
-            setTimeout(() => {
-                graphRef.current.zoom(20, 800);
-            }, 200);
-        }, 1000);
-    }
-
-    const graphData = {
-        nodes: mindmapData.map(node => ({ id: node.id, name: node.label, color: node.color })),
-        links: mindmapData
-            .filter(node => node.parent)
-            .map(node => ({ source: node.parent, target: node.id }))
     };
 
     const handleResize = useCallback(() => {
@@ -166,52 +56,19 @@ const Overlay = ({ showOverlay, handleToggleOverlay }) => {
         }
     }, []);
 
-    function focusOnNode(nodeId) {
+    const handleFeatureClick = (nodeId) => {
         if (graphRef.current) {
-            const graphNode = graphData.nodes.find(n => n.id === nodeId);
-            if (!graphNode) return;
-
-            const { x, y } = graphNode;
-            graphRef.current.centerAt(x, y - 10, 400);
-            setTimeout(() => {
-                graphRef.current.zoom(20, 800);
-            }, 200);
+            graphRef.current.focusOnNode(nodeId);
         }
-    }
-
-    useEffect(() => {
-        if (graphContainerRef.current) {
-            const resizeObserver = new ResizeObserver(handleResize);
-            resizeObserver.observe(graphContainerRef.current);
-
-            return () => resizeObserver.disconnect();
-        }
-    }, [handleResize]);
-
-    useEffect(() => {
-        if (graphData && graphData.nodes && graphData.links) {
-            const simulation = d3.forceSimulation(graphData.nodes)
-                .force('link', d3.forceLink(graphData.links).id(d => d.id))
-                .force('charge', d3.forceManyBody())
-                .force('center', d3.forceCenter(0, 0))
-                .force('repel', d3.forceManyBody().strength(d => (d.id === 'root' || d.parent === 'embedding-dimensionality') ? -300 : -100));
-
-            simulation.on('tick', () => {
-                if (graphRef.current) {
-                    graphRef.current.d3Force('link').links(graphData.links);
-                    graphRef.current.d3Force('charge').strength(-100);
-                    graphRef.current.d3Force('center').x(0).y(0);
-                }
-            });
-
-            return () => simulation.stop();
-        }
-    }, [graphData]);
+    };
 
     return (
         <div className={`overlay ${showOverlay ? 'active' : ''}`}>
             <div className={`overlayContent ${showOverlay ? 'active' : ''}`}>
-                <button onClick={handleToggleOverlay} className="close-button">X</button>
+                <div className="navigationButtons">
+                    <button onClick={handleToggleFullScreen} className="fullScreenButton">⛶</button>
+                    <button onClick={handleToggleOverlay} className="closeButton">X</button>
+                </div>
                 <h2>Woah, that's a lot of dimensions...</h2>
                 <div className="featuresContainer">
                     {[
@@ -222,7 +79,7 @@ const Overlay = ({ showOverlay, handleToggleOverlay }) => {
                         { title: "Diversity Measurement", description: "Quantify the diversity of vectors in the embedding space", icon: "📊" },
                         { title: "Classification", description: "Classify vectors into predefined categories based on their embeddings", icon: "🏷️" },
                     ].map((feature, index) => (
-                        <div key={index} className="featureCard" onClick={() => focusOnNode(feature.title.toLowerCase().replace(' ', '-'))}>
+                        <div key={index} className="featureCard" onClick={() => handleFeatureClick(feature.title.toLowerCase().replace(' ', '-'))}>
                             <div className="featureIcon">{feature.icon}</div>
                             <div className="featureTitle">{feature.title}</div>
                             <div className="featureDescription">{feature.description}</div>
@@ -230,77 +87,7 @@ const Overlay = ({ showOverlay, handleToggleOverlay }) => {
                     ))}
                 </div>
                 <div className="graphContainer" ref={graphContainerRef}>
-                    <div id="graph" className="graph">
-                        <div className="navigationButtons">
-                            <button onClick={() => navigateGraph('prev')} className="navButton">←</button>
-                            <button onClick={() => navigateGraph('next')} className="navButton">→</button>
-                            <button onClick={handleToggleFullScreen} className="fullScreenButton">⛶</button>
-                        </div>
-                        <ForceGraph2D
-                            ref={graphRef}
-                            nodeRelSize={5}
-                            linkWidth={5.5}
-                            width={graphContainerRef.current ? graphContainerRef.current.clientWidth : 1300}
-                            height={graphContainerRef.current ? graphContainerRef.current.clientHeight : 400}
-                            linkDirectionalArrowLength={10}
-                            backgroundColor="#222222"
-                            graphData={graphData}
-                            nodeAutoColorBy="color"
-                            onNodeDragEnd={node => {
-                                node.fx = node.x;
-                                node.fy = node.y;
-                                node.fz = node.z;
-                            }}
-                            linkColor={() => '#cccccc'}
-                            linkDirectionalParticles="2"
-                            linkDirectionalParticleSpeed={d => 2 * 0.001}
-                            nodeLabel="label"
-                            nodeCanvasObject={(node, ctx, globalScale) => {
-                                const label = node.name;
-                                const fontSize = 12 / globalScale;
-                                ctx.font = `${fontSize}px Sans-Serif`;
-                                const textWidth = ctx.measureText(label).width;
-                                const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 1.6); // some padding
-
-                                ctx.textAlign = 'center';
-                                ctx.textBaseline = 'middle';
-                                ctx.fillStyle = node.color;
-
-                                // Wrap text at 100px width
-                                const words = label.split(' ');
-                                let line = '';
-                                const lines = [];
-                                const lineHeight = fontSize * 1.2;
-                                words.forEach(word => {
-                                    const testLine = line + word + ' ';
-                                    const testWidth = ctx.measureText(testLine).width;
-                                    if (testWidth > 100) {
-                                        lines.push(line);
-                                        line = word + ' ';
-                                    } else {
-                                        line = testLine;
-                                    }
-                                });
-                                lines.push(line);
-
-                                lines.forEach((line, i) => {
-                                    ctx.fillText(line, node.x, node.y - (lines.length - 1) * lineHeight / 2 + i * lineHeight);
-                                });
-
-                                node.__bckgDimensions = bckgDimensions; // to re-use in nodePointerAreaPaint
-                            }}
-
-                            nodePointerAreaPaintExtend={6}
-                            nodePointerAreaPaint={(node, color, ctx) => {
-                                ctx.fillStyle = color;
-                                const bckgDimensions = node.__bckgDimensions;
-                                bckgDimensions && ctx.fillRect(node.x - bckgDimensions[0] / 2, node.y - bckgDimensions[1] / 2, ...bckgDimensions);
-                            }}
-                            onNodeClick={node => {
-                                moveCameraToNode(node);
-                            }}
-                        />
-                    </div>
+                    <GraphPage ref={graphRef} graphData={graphData} isFullscreen={isFullscreen} />
                 </div>
             </div>
         </div>
