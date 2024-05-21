@@ -67,9 +67,9 @@ const Overlay = ({ showOverlay, handleToggleOverlay }) => {
             <div className={`overlayContent ${showOverlay ? 'active' : ''}`}>
                 <div className="navigationButtons">
                     <button onClick={handleToggleFullScreen} className="fullScreenButton">⛶</button>
+                    <h2>Woah, that's a lot of dimensions...</h2>
                     <button onClick={handleToggleOverlay} className="closeButton">X</button>
                 </div>
-                <h2>Woah, that's a lot of dimensions...</h2>
                 <div className="featuresContainer">
                     {[
                         { title: "Search", description: "Perform semantic search using vector similarity", icon: "🔍" },
