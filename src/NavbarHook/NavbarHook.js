@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { IoClose, IoMenu } from "react-icons/io5";
 import { useMediaQuery } from "react-responsive";
 import "./NavbarHook.css";
 
-const NavbarHook = ({ selectedKeys, filePath }) => {
+const NavbarHook = ({ selectedKeys, filePath, onRouteChange }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isMobile = useMediaQuery({ maxWidth: "1150px" });
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -18,6 +19,12 @@ const NavbarHook = ({ selectedKeys, filePath }) => {
     }
   };
 
+  const handleNavLinkClick = (path) => {
+    onRouteChange(path);
+    navigate(path);
+    closeMobileMenu();
+  };
+
   const renderNavLinks = () => {
     const listClassName = isMobile ? "nav__list" : "nav__list__web";
     const linkClassName = "nav__link";
@@ -26,37 +33,22 @@ const NavbarHook = ({ selectedKeys, filePath }) => {
     return (
       <ul className={listClassName}>
         <li>
-          <NavLink to="/" className={linkClassName} onClick={closeMobileMenu}>
+          <NavLink to="/" className={linkClassName} onClick={() => handleNavLinkClick('/')}>
             Upload
           </NavLink>
         </li>
         <li>
-          <NavLink
-            to="/preview"
-            className={linkClassName}
-            onClick={closeMobileMenu}
-          >
+          <NavLink to="/preview" className={linkClassName} onClick={() => handleNavLinkClick('/preview')}>
             Preview
           </NavLink>
         </li>
         <li>
-          <NavLink
-            to={{
-              pathname: "/embed",
-              state: { selectedKeys, filePath } // Pass state here
-            }}
-            className={linkClassName}
-            onClick={closeMobileMenu}
-          >
+          <NavLink to="/embed" className={linkClassName} onClick={() => handleNavLinkClick('/embed')}>
             Embeddings
           </NavLink>
         </li>
         <li>
-          <NavLink
-            to="/query"
-            className={linkClassName}
-            onClick={closeMobileMenu}
-          >
+          <NavLink to="/query" className={linkClassName} onClick={() => handleNavLinkClick('/query')}>
             Query
           </NavLink>
         </li>
@@ -66,7 +58,7 @@ const NavbarHook = ({ selectedKeys, filePath }) => {
 
   return (
     <header className="header">
-      <nav className="nav container">    
+      <nav className="nav container">
         <NavLink to="/" className="nav__logo" style={{ paddingTop: "0px", paddingRight: "46px", paddingBottom: "0px", paddingLeft: "46px", color: "#1bcaff", backgroundColor: '#333333' }}>
           VECT.R8
         </NavLink>

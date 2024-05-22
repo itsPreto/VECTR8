@@ -63,7 +63,7 @@ nav a.active {
   margin-top: 80px;
   flex: 1;
   padding-left: 1rem;
-  transition: all 0.3s ease;
+  transition: all 1.3s ease-in-out
 }
 
 h2,

@@ -3,7 +3,6 @@ import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { useLocation } from 'react-router-dom';
 import './Transition.css';
 
-
 const Transition = ({ children, direction }) => {
   const location = useLocation();
   const classNames = direction === 'forward' ? 'slide' : 'slide-reverse';
