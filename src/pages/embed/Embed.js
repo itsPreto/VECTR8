@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import './Embed.css';
 
 const Embed = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [selectedKeys, setSelectedKeys] = useState([]);
   const [filePath, setFilePath] = useState(null);
   const [progress, setProgress] = useState(0);
@@ -17,14 +19,12 @@ const Embed = () => {
     const storedFilePath = localStorage.getItem('fileInfo');
     setSelectedKeys(storedSelectedKeys || []);
     setFilePath(storedFilePath || null);
-  }, []);
 
-  useEffect(() => {
-    if (selectedKeys && filePath) {
+    if (storedSelectedKeys && storedFilePath) {
       checkVectorDb();
       fetchAvailableDatabases();
     }
-  }, [selectedKeys, filePath]);
+  }, []);
 
   const fetchAvailableDatabases = async () => {
     try {
@@ -60,16 +60,33 @@ const Embed = () => {
     }
     console.log("selected_keys:", selectedKeys);
     console.log("file_path:", filePath);
+
     try {
       const response = await fetch('http://10.0.0.252:4000/create_vector_database', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ file_path: filePath, selected_keys: selectedKeys }),
       });
+
       if (response.ok) {
         console.log("Vector database created successfully");
+
+        // Listen for progress updates via EventSource
+        const eventSource = new EventSource('http://10.0.0.252:4000/progress');
+
+        eventSource.onmessage = (event) => {
+          const newProgress = parseFloat(event.data);
+          if (!isNaN(newProgress)) {
+            setProgress(newProgress);
+          }
+        };
+
+        eventSource.onerror = (error) => {
+          console.error('Error with EventSource:', error);
+          eventSource.close();
+        };
       } else {
-        console.error('Error creating vector database');
+        console.error('Error creating vector database', response);
       }
     } catch (error) {
       console.error('Error creating vector database:', error);
@@ -123,7 +140,8 @@ const Embed = () => {
 
   const handleDbSelect = (db) => {
     setSelectedDb(db);
-    // Load the selected database for querying
+    localStorage.setItem('selectedDb', JSON.stringify(db));
+    navigate('/query'); // Navigate to the Preview page
   };
 
   return (
@@ -144,13 +162,13 @@ const Embed = () => {
           <button id="createVectorDb" className="button" onClick={createVectorDatabase}>Create Vector DB</button>
         </div>
       )}
-      <div id="progressBarContainer" style={{ visibility: progress > 0 ? "visible" : "hidden" }}>
+      <div id="progressBarContainer" style={{ visibility: progress > 0 ? "visible" : "hidden", padding: "20px" }}>
         <div className="circular-progress">
           <svg viewBox="0 0 100 100">
             <circle className="bg" cx="50" cy="50" r="45"></circle>
             <circle className="progress" cx="50" cy="50" r="45" style={{ strokeDashoffset: 314 - (314 * progress) / 100 }}></circle>
           </svg>
-          <div className="percentage">{progress}%</div>
+          <div className="percentage">{progress.toFixed(2)}%</div>
         </div>
       </div>
       <div id="logContainer"></div>

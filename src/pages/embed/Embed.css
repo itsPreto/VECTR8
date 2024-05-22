@@ -1,0 +1,174 @@
+/* Add this CSS to your styles */
+
+
+:root {
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --accent-color: #ffc107;
+    --background-color: #f8f9fa;
+    --text-color: #343a40;
+    --border-color: #dee2e6;
+    --header-height: 3.5rem;
+    --font-family: 'Montserrat', sans-serif;
+    --font-size-large: 1.5rem;
+    --font-size-medium: 1rem;
+    --font-size-small: 0.875rem;
+    --border-radius: 8px;
+    --transition: all 0.3s ease;
+}
+
+body {
+    font-family: var(--font-family);
+    margin: 0;
+    padding: 0;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+.embed-section {
+    padding: 2rem;
+    background-color: var(--background-color);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.embed-title {
+    text-align: center;
+    font-size: var(--font-size-large);
+    color: var(--text-color);
+    margin-bottom: 1rem;
+}
+
+.embed-container {
+    text-align: center;
+    background-color: #fff;
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.button {
+    padding: 0.5rem 1rem;
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.button:hover {
+    background-color: var(--accent-color);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.progress-bar-container {
+    transition: all 0.5s ease;
+
+    display: none;
+    margin: 1rem auto;
+}
+
+.progress-bar-container.visible {
+    transition: all 0.5s ease;
+
+    display: block;
+}
+
+.circular-progress {
+    transition: all 0.5s ease;
+
+    position: relative;
+    width: 100px;
+    height: 100px;
+}
+
+.circular-progress svg {
+    transition: all 0.5s ease;
+
+    width: 100%;
+    height: 100%;
+}
+
+.circular-progress .bg {
+    fill: none;
+    transition: all 0.5s ease;
+
+    stroke: #e6e6e6;
+    stroke-width: 10;
+}
+
+.circular-progress .progress {
+    fill: none;
+    stroke: #007bff;
+    stroke-width: 10;
+    stroke-dasharray: 314;
+    transition: all 0.5s ease;
+}
+
+.circular-progress .percentage {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 18px;
+    font-weight: bold;
+    transition: all 0.5s ease;
+}
+
+/*   
+  .circular-progress .percentage {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: var(--font-size-medium);
+    color: var(--text-color);
+  } */
+
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background-color: #fff;
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.db-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+}
+
+.db-item {
+    padding: 0.5rem;
+    background-color: var(--background-color);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.db-item:hover {
+    background-color: var(--accent-color);
+    color: #fff;
+}
+
+.stats-title {
+    margin-top: 1rem;
+    font-size: var(--font-size-medium);
+    color: var(--text-color);
+}

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { JSONTree } from "react-json-tree";
 import { motion } from 'framer-motion';
 import Overlay from '../overlay/Overlay';
-import Embed from '../Embed'; // Import Embed component
+import Embed from '../embed/Embed'; // Import Embed component
 import './Preview.css';
 
 const customTheme = {

@@ -1,3 +1,4 @@
+import subprocess
 from flask import Flask, request, jsonify, stream_with_context, Response
 from flask_cors import CORS
 from transformers import GPT2Tokenizer
@@ -15,6 +16,9 @@ from openai import OpenAI
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+def start_react_app():
+    subprocess.Popen(["npm", "start"])
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})  # Enable CORS for all routes
@@ -50,7 +54,14 @@ class MBedFastAF:
         processed_docs = 0
         embeddings = []
         for doc, data in zip(documents, full_data):
-            embedding = self.get_embedding(doc)
+            # Ensure doc is a dictionary before proceeding
+            if not isinstance(doc, dict):
+                raise ValueError('Document must be a dictionary.')
+
+            # Concatenate all values in the dictionary to create a single string
+            doc_text = " ".join(str(value) for value in doc.values())
+            
+            embedding = self.get_embedding(doc_text)
             embeddings.append(embedding)
             self.full_data.append(data)
             processed_docs += 1
@@ -60,6 +71,7 @@ class MBedFastAF:
             self.vectors = embeddings
         else:
             self.vectors = np.vstack((self.vectors, embeddings))
+
 
     def get_embedding(self, text):
         text = text.replace("\n", " ")
@@ -79,8 +91,9 @@ class MBedFastAF:
         results = []
         for index in top_indices:
             doc_id = self.documents[index]
-            if doc_id not in unique_documents:
-                unique_documents[doc_id] = True
+            doc_id_str = str(doc_id)  # Convert doc_id to a string
+            if doc_id_str not in unique_documents:
+                unique_documents[doc_id_str] = True
                 results.append((self.documents[index], self.full_data[index], similarities[index]))
                 if len(results) >= top_k:
                     break
@@ -213,14 +226,16 @@ def create_vector_database():
     current_progress = 0
     data = request.get_json()
     file_path = data.get('file_path')
-    selected_keys = data.get('selected_keys', [])
-
-    print("Selected keys: ", selected_keys)
-    print("File path: ", file_path)
+    selected_keys = data.get('selected_keys', [])    
     
+    file_path = os.path.join('./public/uploads', os.path.basename(file_path))
     
     if not file_path or not os.path.exists(file_path):
         return jsonify({'error': 'Invalid file path'}), 400
+    
+    print("File path exists: ", os.path.exists(file_path))
+    print("Selected keys: ", selected_keys)
+    print("File path: ", file_path)
 
     file_extension = os.path.splitext(file_path)[1].lower()
 
@@ -257,12 +272,12 @@ def create_vector_database():
             library.add_documents([document], [data])
             processed_docs += 1
             current_progress = processed_docs / total_docs * 100
-            logging.info(f"Processed {processed_docs} out of {total_docs} documents. Progress: {current_progress:.2f}%")
+            logger.info(f"Processed {processed_docs} out of {total_docs} documents. Progress: {current_progress:.2f}%")
             yield f"data: {current_progress:.2f}\n\n"
 
         library.save(db_filename)
         logger.info(f"Created vector database: {db_filename}")
-        yield "data: \n\n"
+        yield f"data: {db_filename}\n\n"
 
     return Response(stream_with_context(generate_progress()), mimetype='text/event-stream')
 
@@ -446,13 +461,23 @@ def progress():
             yield f"data: 100\n\n"
 
     return Response(stream_with_context(generate_progress()), mimetype='text/event-stream')
-
 @app.route('/query', methods=['POST'])
 def query():
     global library
     data = request.get_json()
     query_text = data.get('query_text')
     similarity_metric = data.get('similarity_metric')
+    db_filename = data.get('db_filename')
+
+    if not db_filename:
+        return jsonify({'error': 'No database file specified'}), 400
+
+    db_filepath = os.path.join(db_path, db_filename)
+    if not os.path.exists(db_filepath):
+        return jsonify({'error': 'Database file not found'}), 404
+
+    library = MBedFastAF('nomic-ai/nomic-embed-text-v1.5-GGUF', similarity_metric)
+    library.load(db_filepath)
 
     logger.info(f"Querying with text: {query_text}")
     results = library.query(query_text, top_k=5)
@@ -462,6 +487,7 @@ def query():
     results = [(result[0], result[1], float(result[2])) for result in results]
 
     return jsonify(results)
+
 
 @app.route('/list_files', methods=['GET'])
 def list_files():
@@ -546,4 +572,5 @@ if __name__ == '__main__':
     upload_folder = 'uploads'
     if not os.path.exists(upload_folder):
         os.makedirs(upload_folder)
+    start_react_app()
     app.run(debug=True, host='0.0.0.0', port=4000)

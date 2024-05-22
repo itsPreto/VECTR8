@@ -325,7 +325,8 @@ footer {
 }
 
 #resultsContainer {
-  max-height: 41vh;
+  max-height: 50vh;
+  min-width: 96vw;
   padding: 1rem;
   border-radius: var(--border-radius);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
