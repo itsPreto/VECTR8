@@ -176,6 +176,10 @@ cd VECTR8</code></pre></td>
       <td><pre><code>python3 rag.py</code></pre></td>
     </tr>
     <tr>
+      <td>Automatically launch React frontend</td>
+      <td>The Python endpoint will launch the React frontend in a separate subprocess.</td>
+    </tr>
+    <tr>
       <td>Open your web browser</td>
       <td>Navigate to <code>http://127.0.0.1:4000</code></td>
     </tr>
@@ -183,6 +187,7 @@ cd VECTR8</code></pre></td>
 </div>
 
 <h2 align="center">Uploading Files 📂</h2>
+
 
 <div align="center">
   <table>
