@@ -1,16 +1,23 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import "./Query.css";
 
-const Query = () => {
+const Query = ({ selectedDb }) => {
   const [queryText, setQueryText] = useState(() => localStorage.getItem("queryText") || "");
   const [similarityMetric, setSimilarityMetric] = useState(() => localStorage.getItem("similarityMetric") || "cosine");
   const [results, setResults] = useState(() => JSON.parse(localStorage.getItem("results")) || []);
   const [ipAddress, setIpAddress] = useState(() => localStorage.getItem("ipAddress") || "10.0.0.252");
-  const [isLoading, setIsLoading] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [selectedDb, setSelectedDb] = useState(() => JSON.parse(localStorage.getItem("selectedDb")) || null);
+  const [isLoading] = useState(false);
+  const [progress] = useState(0);
+  const navigate = useNavigate();
+
+  // useEffect(() => {
+  //   if (!selectedDb) {
+  //     alert("No database selected. Please select a database first.");
+  //   }
+  // }, [selectedDb, navigate]);
 
   useEffect(() => {
     localStorage.setItem("queryText", queryText);
@@ -32,44 +39,11 @@ const Query = () => {
     localStorage.setItem("selectedDb", JSON.stringify(selectedDb));
   }, [selectedDb]);
 
-  const handleCreateDatabase = async (filePath, selectedKeys) => {
-    try {
-      setIsLoading(true);
-      setProgress(0);
-
-      const response = await fetch(`http://${ipAddress}:4000/create_vector_database`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ file_path: filePath, selected_keys: selectedKeys })
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        alert(error.error);
-      } else {
-        fetchProgress();
-      }
-    } catch (error) {
-      console.error("Error creating vector database:", error);
-      setIsLoading(false);
-    }
-  };
-
-  const fetchProgress = () => {
-    const eventSource = new EventSource(`http://${ipAddress}:4000/progress`);
-    eventSource.onmessage = (event) => {
-      const newProgress = parseFloat(event.data);
-      setProgress(newProgress);
-      if (newProgress >= 100) {
-        eventSource.close();
-        setIsLoading(false);
-      }
-    };
-  };
-
   const handleQuery = async () => {
     if (!selectedDb) {
       alert("No database selected. Please select a database first.");
+    navigate('/embed');
+
       return;
     }
 
@@ -127,7 +101,6 @@ const Query = () => {
                 <p><strong>Overview:</strong> {doc.overview}</p>
                 <p><strong>Release Date:</strong> {doc.release_date}</p>
                 <p><strong>Popularity:</strong> {doc.popularity}</p>
-                {/* Add more fields as needed */}
               </div>
             </div>
           );

@@ -1,20 +1,38 @@
 /* TransitionWrapper.css */
-.fade-enter {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  .fade-enter-active {
-    opacity: 1;
-    transform: scale(1);
-    transition: opacity 300ms, transform 300ms;
-  }
-  .fade-exit {
-    opacity: 1;
-    transform: scale(1);
-  }
-  .fade-exit-active {
-    opacity: 0;
-    transform: scale(0.9);
-    transition: opacity 300ms, transform 300ms;
-  }
-  
+.slide-enter {
+  opacity: 0;
+  transform: translateX(100%);
+}
+.slide-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 300ms, transform 300ms;
+}
+.slide-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+.slide-exit-active {
+  opacity: 0;
+  transform: translateX(-100%);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.slide-reverse-enter {
+  opacity: 0;
+  transform: translateX(-100%);
+}
+.slide-reverse-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 300ms, transform 300ms;
+}
+.slide-reverse-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+.slide-reverse-exit-active {
+  opacity: 0;
+  transform: translateX(100%);
+  transition: opacity 300ms, transform 300ms;
+}

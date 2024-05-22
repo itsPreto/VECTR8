@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { JSONTree } from "react-json-tree";
 import { motion } from 'framer-motion';
 import Overlay from '../overlay/Overlay';
-import Embed from '../embed/Embed'; // Import Embed component
+import Embed from '../embed/Embed';
 import './Preview.css';
 
 const customTheme = {
@@ -45,36 +45,9 @@ const Preview = ({ previewData, filePath, fileSize }) => {
   const [tokenCount, setTokenCount] = useState(null);
   const [filterText, setFilterText] = useState("");
   const [showOverlay, setShowOverlay] = useState(false);
-  const [showEmbed, setShowEmbed] = useState(false);
+  const [showEmbed] = useState(false);
 
-  useEffect(() => {
-    console.log("selectedKeys:", selectedKeys);
-    if (selectedKeys.length > 0) {
-      updatePreviews();
-    }
-  }, [selectedKeys, filePath]);
-
-  useEffect(() => {
-    localStorage.setItem('selectedKeys', JSON.stringify(selectedKeys));
-  }, [selectedKeys]);
-
-  useEffect(() => {
-    localStorage.setItem('document', JSON.stringify(document));
-  }, [document]);
-
-  useEffect(() => {
-    localStorage.setItem('embeddings', JSON.stringify(embeddings));
-  }, [embeddings]);
-
-  const handleKeySelection = (key) => {
-    setSelectedKeys((prevKeys) =>
-      prevKeys.includes(key)
-        ? prevKeys.filter((k) => k !== key)
-        : [...prevKeys, key]
-    );
-  };
-
-  const updatePreviews = async () => {
+  const updatePreviews = useCallback(async () => {
     if (!filePath) {
       console.error('File path is undefined');
       return;
@@ -104,6 +77,33 @@ const Preview = ({ previewData, filePath, fileSize }) => {
     } catch (error) {
       console.error('Error previewing document:', error);
     }
+  }, [filePath, selectedKeys]);
+
+  useEffect(() => {
+    console.log("selectedKeys:", selectedKeys);
+    if (selectedKeys.length > 0) {
+      updatePreviews();
+    }
+  }, [selectedKeys, filePath, updatePreviews]);
+
+  useEffect(() => {
+    localStorage.setItem('selectedKeys', JSON.stringify(selectedKeys));
+  }, [selectedKeys]);
+
+  useEffect(() => {
+    localStorage.setItem('document', JSON.stringify(document));
+  }, [document]);
+
+  useEffect(() => {
+    localStorage.setItem('embeddings', JSON.stringify(embeddings));
+  }, [embeddings]);
+
+  const handleKeySelection = (key) => {
+    setSelectedKeys((prevKeys) =>
+      prevKeys.includes(key)
+        ? prevKeys.filter((k) => k !== key)
+        : [...prevKeys, key]
+    );
   };
 
   const displayPreview = () => {
@@ -166,6 +166,12 @@ const Preview = ({ previewData, filePath, fileSize }) => {
           <p><strong>File:</strong> {filePath} </p>
           <div style={{ margin: '0 10px', height: '20px', borderLeft: '1px solid black' }}></div>
           <p><strong>Size:</strong> {fileSize} bytes</p>
+          {tokenCount !== null && (
+            <>
+              <div style={{ margin: '0 10px', height: '20px', borderLeft: '1px solid black' }}></div>
+              <p><strong>Tokens:</strong> {tokenCount}</p>
+            </>
+          )}
         </div>
         <div className="controls">
           <input

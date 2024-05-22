@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import NavbarHook from "./NavbarHook/NavbarHook";
 import Upload from "./pages/Upload";
 import Preview from "./pages/preview/Preview";

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { formatBytes, timeAgo } from '../../utils/FileInfo';
+
 import './Embed.css';
 
 const Embed = () => {
-  const location = useLocation();
   const navigate = useNavigate();
   const [selectedKeys, setSelectedKeys] = useState([]);
   const [filePath, setFilePath] = useState(null);
@@ -15,10 +16,29 @@ const Embed = () => {
   const [selectedDb, setSelectedDb] = useState(null);
 
   useEffect(() => {
-    const storedSelectedKeys = JSON.parse(localStorage.getItem('selectedKeys'));
+    const storedSelectedKeys = localStorage.getItem('selectedKeys');
     const storedFilePath = localStorage.getItem('fileInfo');
-    setSelectedKeys(storedSelectedKeys || []);
-    setFilePath(storedFilePath || null);
+    const storedSelectedDb = localStorage.getItem('selectedDb');
+
+    if (storedSelectedKeys) {
+      try {
+        setSelectedKeys(JSON.parse(storedSelectedKeys));
+      } catch (error) {
+        console.error('Error parsing selectedKeys from localStorage', error);
+      }
+    }
+
+    if (storedFilePath) {
+      setFilePath(storedFilePath);
+    }
+
+    if (storedSelectedDb) {
+      try {
+        setSelectedDb(JSON.parse(storedSelectedDb));
+      } catch (error) {
+        console.error('Error parsing selectedDb from localStorage', error);
+      }
+    }
 
     if (storedSelectedKeys && storedFilePath) {
       checkVectorDb();
@@ -145,14 +165,16 @@ const Embed = () => {
   };
 
   return (
-    <section id="embed">
-      <h2 style={{ textAlign: "center" }}>Create Embeddings</h2>
+    <section id="embed" className="embed-section">
+      <h2 className="embed-title">Create Embeddings</h2>
       {isVectorDbExisting ? (
-        <div>
+        <div className="embed-container">
           <p>Manage your vector database and view statistics</p>
-          <button className="button" onClick={backupDatabase}>Backup Database</button>
-          <button className="button" onClick={deleteDatabase}>Delete Database</button>
-          <h3>Database Statistics</h3>
+          <div className="button-group">
+            <button className="button" onClick={backupDatabase}>Backup Database</button>
+            <button className="button" onClick={deleteDatabase}>Delete Database</button>
+          </div>
+          <h3 className="stats-title">Database Statistics</h3>
           <p>Total Documents: <span id="total_documents">{totalDocuments}</span></p>
           <p>Average Vector Length: <span id="avg_vector_length">{avgVectorLength}</span></p>
           <button className="button" onClick={getDbStats}>Refresh Stats</button>
@@ -162,7 +184,7 @@ const Embed = () => {
           <button id="createVectorDb" className="button" onClick={createVectorDatabase}>Create Vector DB</button>
         </div>
       )}
-      <div id="progressBarContainer" style={{ visibility: progress > 0 ? "visible" : "hidden", padding: "20px" }}>
+      <div id="progressBarContainer" className={`progress-bar-container ${progress > 0 ? 'visible' : ''}`}>
         <div className="circular-progress">
           <svg viewBox="0 0 100 100">
             <circle className="bg" cx="50" cy="50" r="45"></circle>
@@ -176,15 +198,19 @@ const Embed = () => {
         <h3>Select Database</h3>
         <div className="db-list">
           {dbList.map((db, index) => (
-            <div key={index} className="db-item" onClick={() => handleDbSelect(db)}>
+            <div 
+              key={index} 
+              className={`db-item ${selectedDb && selectedDb.name === db.name ? 'active' : ''} ${selectedDb && selectedDb.name === db.name ? 'pulse' : ''}`} 
+              onClick={() => handleDbSelect(db)}
+            >
               <p>{db.name}</p>
-              <p>{db.size} bytes</p>
-              <p>Uploaded: {db.upload_date}</p>
+              <p>{formatBytes(db.size)}</p>
+              <p>Uploaded: {timeAgo(db.upload_date)}</p>
+              {selectedDb && selectedDb.name === db.name && <span className="active-indicator"></span>}
             </div>
           ))}
         </div>
         {selectedDb && <p>Selected Database: {selectedDb.name}</p>}
-        <button className="button" onClick={() => alert('Querying the selected database')}>Query Database</button>
       </div>
     </section>
   );
