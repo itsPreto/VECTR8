@@ -352,6 +352,7 @@ def preview_file():
         return jsonify({'error': 'Invalid file path'}), 400
 
     file_extension = os.path.splitext(file_path)[1].lower()
+    file_size = os.path.getsize(file_path)
 
     preview_data = {}
     if file_extension == '.json':
@@ -364,7 +365,10 @@ def preview_file():
     else:
         return jsonify({'error': 'Unsupported file format. Only JSON and CSV are supported.'}), 400
 
-    return jsonify(preview_data), 200
+    return jsonify({
+        'previewData': preview_data,
+        'fileSize': file_size
+    }), 200
 
 @app.route('/start_tsne', methods=['POST'])
 def start_tsne():
@@ -572,5 +576,5 @@ if __name__ == '__main__':
     upload_folder = 'uploads'
     if not os.path.exists(upload_folder):
         os.makedirs(upload_folder)
-    start_react_app()
+    # start_react_app()
     app.run(debug=True, host='0.0.0.0', port=4000)

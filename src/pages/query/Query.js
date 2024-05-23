@@ -8,7 +8,7 @@ const Query = ({ selectedDb }) => {
   const [queryText, setQueryText] = useState(() => localStorage.getItem("queryText") || "");
   const [similarityMetric, setSimilarityMetric] = useState(() => localStorage.getItem("similarityMetric") || "cosine");
   const [results, setResults] = useState(() => JSON.parse(localStorage.getItem("results")) || []);
-  const [ipAddress, setIpAddress] = useState(() => localStorage.getItem("ipAddress") || "10.0.0.252");
+  const [ipAddress] = useState(() => localStorage.getItem("ipAddress") || "127.0.0.1");
   const [isLoading] = useState(false);
   const [progress] = useState(0);
   const navigate = useNavigate();
@@ -71,7 +71,7 @@ const Query = ({ selectedDb }) => {
     modal.innerHTML = `
       <div class="modal-content">
         <span class="close-inspect-button">&times;</span>
-        <pre>${JSON.stringify(data, null, 2)}</pre>
+        <pre class="result-details">${JSON.stringify(data, null, 2)}</pre>
       </div>
     `;
     const closeButton = modal.querySelector(".close-inspect-button");
@@ -112,18 +112,6 @@ const Query = ({ selectedDb }) => {
   return (
     <section id="query">
       <h2>Query Vector Database</h2>
-      <div>
-        <input
-          type="text"
-          id="ipAddressInput"
-          value={ipAddress}
-          onChange={(e) => setIpAddress(e.target.value)}
-          placeholder="Enter IP address"
-        />
-        <button className="button" onClick={() => setIpAddress(document.getElementById("ipAddressInput").value)}>
-          Update IP
-        </button>
-      </div>
       <div style={{ display: "flex", flexDirection: "row", alignItems: "baseline" }}>
         <input
           type="text"

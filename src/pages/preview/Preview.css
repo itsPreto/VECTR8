@@ -178,6 +178,11 @@
     border: 2px solid #007bff;
 }
 
+.no-data-available-label {
+    text-align: -webkit-center;
+    width: 100%;
+}
+
 .card:hover {
     transform: scale(1.05);
     background-color: #f0f0f0;

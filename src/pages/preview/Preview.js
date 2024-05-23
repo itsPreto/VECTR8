@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { JSONTree } from "react-json-tree";
 import { motion } from 'framer-motion';
+import { formatBytes, timeAgo } from '../../utils/FileInfo';
 import Overlay from '../overlay/Overlay';
 import Embed from '../embed/Embed';
 import './Preview.css';
@@ -29,8 +30,10 @@ const customTheme = {
 const Preview = ({ previewData, filePath, fileSize }) => {
   const [selectedKeys, setSelectedKeys] = useState(() => {
     const savedKeys = localStorage.getItem('selectedKeys');
-    return savedKeys ? JSON.parse(savedKeys) : [];
+    return savedKeys ? JSON.parse(savedKeys) : (previewData.keys || []);
   });
+
+  const [selectableKeys, setSelectableKeys] = useState([]);
 
   const [document, setDocument] = useState(() => {
     const savedDocument = localStorage.getItem('document');
@@ -42,6 +45,18 @@ const Preview = ({ previewData, filePath, fileSize }) => {
     return savedEmbeddings ? JSON.parse(savedEmbeddings) : null;
   });
 
+  useEffect(() => {
+    if (previewData) {
+      const keys = Array.isArray(previewData) ? previewData : Object.keys(previewData || {});
+      setSelectableKeys(keys);
+    }
+  }, [previewData]);
+
+  useEffect(() => {
+    localStorage.setItem('selectedKeys', JSON.stringify(selectedKeys));
+  }, [selectedKeys]);
+
+  const [ipAddress] = useState(() => localStorage.getItem("ipAddress") || "127.0.0.1");
   const [tokenCount, setTokenCount] = useState(null);
   const [filterText, setFilterText] = useState("");
   const [showOverlay, setShowOverlay] = useState(false);
@@ -56,7 +71,7 @@ const Preview = ({ previewData, filePath, fileSize }) => {
       const data = { file_path: filePath, selected_keys: selectedKeys };
       console.log('Sending data:', data);
 
-      const response = await fetch('http://10.0.0.252:4000/preview_document', {
+      const response = await fetch(`http://${ipAddress}:4000/preview_document`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -77,10 +92,9 @@ const Preview = ({ previewData, filePath, fileSize }) => {
     } catch (error) {
       console.error('Error previewing document:', error);
     }
-  }, [filePath, selectedKeys]);
+  }, [filePath, ipAddress, selectedKeys]);
 
   useEffect(() => {
-    console.log("selectedKeys:", selectedKeys);
     if (selectedKeys.length > 0) {
       updatePreviews();
     }
@@ -98,6 +112,14 @@ const Preview = ({ previewData, filePath, fileSize }) => {
     localStorage.setItem('embeddings', JSON.stringify(embeddings));
   }, [embeddings]);
 
+  useEffect(() => {
+    if (previewData) {
+      const keys = Array.isArray(previewData) ? previewData : Object.keys(previewData || {});
+      setSelectableKeys(keys);
+    }
+  }, [previewData]);
+
+
   const handleKeySelection = (key) => {
     setSelectedKeys((prevKeys) =>
       prevKeys.includes(key)
@@ -107,11 +129,10 @@ const Preview = ({ previewData, filePath, fileSize }) => {
   };
 
   const displayPreview = () => {
-    if (!previewData) {
-      return <p>No preview data available</p>;
+    if (!previewData || !Array.isArray(selectableKeys)) {
+      return <p className="no-data-available-label">No preview data available</p>;
     }
-    const keys = Array.isArray(previewData) ? previewData : Object.keys(previewData);
-    const filteredKeys = keys.filter((key) =>
+    const filteredKeys = selectableKeys.filter((key) =>
       key.toLowerCase().includes(filterText.toLowerCase())
     );
     const selectedKeysSet = new Set(selectedKeys);
@@ -145,8 +166,7 @@ const Preview = ({ previewData, filePath, fileSize }) => {
   };
 
   const handleSelectAll = () => {
-    const keys = Array.isArray(previewData) ? previewData : Object.keys(previewData);
-    setSelectedKeys(keys);
+    setSelectedKeys(selectableKeys);
   };
 
   const handleDeselectAll = () => {
@@ -165,7 +185,7 @@ const Preview = ({ previewData, filePath, fileSize }) => {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <p><strong>File:</strong> {filePath} </p>
           <div style={{ margin: '0 10px', height: '20px', borderLeft: '1px solid black' }}></div>
-          <p><strong>Size:</strong> {fileSize} bytes</p>
+          <p style={{ color: '#e8711a' }}>{formatBytes(fileSize)}</p>
           {tokenCount !== null && (
             <>
               <div style={{ margin: '0 10px', height: '20px', borderLeft: '1px solid black' }}></div>

@@ -129,6 +129,10 @@ input:focus, select:focus {
     animation: scaleIn 0.3s;
 }
 
+.result-details {
+    text-wrap: balance;
+}
+
 .close-inspect-button {
     float: right;
     background-color: #dc3545;

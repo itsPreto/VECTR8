@@ -8,31 +8,32 @@ import Query from "./pages/query/Query";
 import TransitionWrapper from "./transition/Transition";
 import './App.css';
 
-const AppRoutes = ({ handleRouteChange, direction }) => {
+const AppRoutes = ({ handleRouteChange, direction, previewData, filePath, fileSize }) => {
   const location = useLocation();
 
   return (
     <TransitionWrapper direction={direction}>
       <Routes location={location}>
         <Route path="/" element={<Upload onPreviewData={handleRouteChange} />} />
-        <Route path="/preview" element={<Preview />} />
+        <Route path="/preview" element={<Preview previewData={previewData} filePath={filePath} fileSize={fileSize} />} />
         <Route path="/embed" element={<Embed />} />
         <Route path="/query" element={<Query />} />
       </Routes>
     </TransitionWrapper>
   );
 };
-
 const App = () => {
   const [previewData, setPreviewData] = useState(null);
   const [filePath, setFilePath] = useState(null);
+  const [fileSize, setFileSize] = useState(null);
   const [selectedKeys, setSelectedKeys] = useState([]);
   const [navigationDirection, setNavigationDirection] = useState('forward');
 
-  const handlePreviewData = (data, path) => {
+  const handlePreviewData = (data, path, size) => {
     setPreviewData(data);
+    setFileSize(size);
     setFilePath(path);
-    setSelectedKeys(data.keys || []);
+    setSelectedKeys(data || []); // Ensure data.keys is defined
   };
 
   const determineDirection = (currentPath, nextPath) => {
@@ -51,9 +52,9 @@ const App = () => {
 
   return (
     <Router>
-      <NavbarHook selectedKeys={selectedKeys} filePath={filePath} onRouteChange={handleRouteChange} />
+      <NavbarHook selectedKeys={selectedKeys} filePath={filePath} onPreviewData={handleRouteChange} />
       <main className="main-content">
-        <AppRoutes handleRouteChange={handlePreviewData} direction={navigationDirection} />
+        <AppRoutes handleRouteChange={handlePreviewData} direction={navigationDirection} previewData={previewData} filePath={filePath} fileSize={fileSize} />
       </main>
     </Router>
   );

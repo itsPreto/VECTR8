@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import md5 from 'md5';
@@ -15,11 +15,18 @@ import videoIcon from '../assets/video-logo.svg';
 const Upload = ({ onPreviewData }) => {
     const [file, setFile] = useState(() => JSON.parse(localStorage.getItem('file')) || null);
     const [fileInfo, setFileInfo] = useState(() => localStorage.getItem('fileInfo') || null);
+    const [fileSize, setFileSize] = useState(() => localStorage.getItem('fileSize') || null);
     const [datasets, setDatasets] = useState(() => JSON.parse(localStorage.getItem('datasets')) || []);
     const [selectedKeys, setSelectedKeys] = useState(() => JSON.parse(localStorage.getItem('selectedKeys')) || []);
     const [isDragging, setIsDragging] = useState(false);
     const [uploadSuccess, setUploadSuccess] = useState(() => JSON.parse(localStorage.getItem('uploadSuccess')) || false);
+    const [ipAddress, setIpAddress] = useState(() => {
+        const initialIp = localStorage.getItem("ipAddress") || "10.0.0.252";
+        console.log("IP Address set to:", initialIp);
+        return initialIp;
+    });
     const [loading, setLoading] = useState(false);
+
     const [dataWizardLoading, setDataWizardLoading] = useState(false);
     const [, setWizardFile] = useState(null);
     const [wizardFileInfo, setWizardFileInfo] = useState(null);
@@ -30,12 +37,6 @@ const Upload = ({ onPreviewData }) => {
     const [isAutoScrollEnabled, setIsAutoScrollEnabled] = useState(true);
 
     const navigate = useNavigate();
-
-    useEffect(() => {
-        fetchDatasets();
-        const interval = setInterval(fetchDatasets, 30000); // Poll every 30 seconds
-        return () => clearInterval(interval); // Cleanup on unmount
-    }, []);
 
     useEffect(() => {
         if (isAutoScrollEnabled && chatWindowRef.current) {
@@ -50,6 +51,10 @@ const Upload = ({ onPreviewData }) => {
     useEffect(() => {
         localStorage.setItem('fileInfo', fileInfo);
     }, [fileInfo]);
+
+    useEffect(() => {
+        localStorage.setItem('fileSize', fileSize);
+    }, [fileSize]);
 
     useEffect(() => {
         localStorage.setItem('uploadSuccess', JSON.stringify(uploadSuccess));
@@ -71,15 +76,20 @@ const Upload = ({ onPreviewData }) => {
         localStorage.setItem('selectedKeys', JSON.stringify(selectedKeys));
     }, [selectedKeys]);
 
-    const fetchDatasets = async () => {
+    // Add this useEffect to update localStorage when ipAddress changes
+    useEffect(() => {
+        localStorage.setItem('ipAddress', ipAddress);
+    }, [ipAddress]);
+
+    const fetchDatasets = useCallback(async () => {
         setLoading(true);
         try {
-            const response = await fetch('http://10.0.0.252:4000/list_uploads');
+            const response = await fetch(`http://${ipAddress}:4000/list_uploads`);
             const newDatasets = await response.json();
             if (response.ok) {
                 const newChecksum = md5(JSON.stringify(newDatasets));
                 const cachedChecksum = localStorage.getItem('datasetsChecksum');
-                
+
                 if (newChecksum !== cachedChecksum) {
                     setDatasets(newDatasets);
                     localStorage.setItem('datasetsChecksum', newChecksum);
@@ -91,8 +101,15 @@ const Upload = ({ onPreviewData }) => {
             console.error('Error fetching datasets:', error);
         }
         setLoading(false);
-    };
+    }, [ipAddress]);
 
+
+    useEffect(() => {
+        fetchDatasets();
+        const interval = setInterval(fetchDatasets, 30000); // Poll every 30 seconds
+        return () => clearInterval(interval); // Cleanup on unmount
+    }, [fetchDatasets]);
+    
     const handleFileChange = async (event) => {
         const selectedFile = event.target.files[0];
         if (!selectedFile) return;
@@ -102,7 +119,7 @@ const Upload = ({ onPreviewData }) => {
         formData.append('file', selectedFile);
         setLoading(true);
         try {
-            const response = await fetch('http://10.0.0.252:4000/upload_file', {
+            const response = await fetch(`http://${ipAddress}:4000/upload_file`, {
                 method: 'POST',
                 body: formData
             });
@@ -126,28 +143,29 @@ const Upload = ({ onPreviewData }) => {
     const fetchPreviewData = async (filePath) => {
         console.log("Fetching preview data for file:", filePath);
         try {
-            const response = await fetch('http://10.0.0.252:4000/preview_file', {
+            const response = await fetch(`http://${ipAddress}:4000/preview_file`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ file_path: filePath })
             });
-            const previewData = await response.json();
+            const filePreviewData = await response.json();
             if (response.ok) {
-                console.log("Preview data:", previewData);
-                onPreviewData(previewData, filePath);
+                console.log("Preview data:", filePreviewData);
+                onPreviewData(filePreviewData.previewData, filePath, filePreviewData.fileSize);
                 navigate('/preview'); // Navigate to the Preview page
             } else {
-                alert(previewData.error);
+                alert(filePreviewData.error);
             }
         } catch (error) {
             console.error('Error fetching preview data:', error);
         }
     };
 
-    const handleDatasetClick = (filePath) => {
-        setFileInfo(filePath);
-        setSelectedKeys([]); // Clear out the previous list of selected keys
+    const handleDatasetClick = (filePath, fileSize) => {
         localStorage.removeItem('selectedKeys'); // Clear out local storage
+        setFileInfo(filePath);
+        setFileSize(fileSize);
+        setSelectedKeys([]); // Clear out the previous list of selected keys
         fetchPreviewData(filePath);
     };
 
@@ -160,14 +178,14 @@ const Upload = ({ onPreviewData }) => {
         formData.append('file', selectedFile);
         setDataWizardLoading(true);
         try {
-            const response = await fetch('http://10.0.0.252:4000/upload_file', {
+            const response = await fetch(`http://${ipAddress}:4000/upload_file`, {
                 method: 'POST',
                 body: formData
             });
             const result = await response.json();
             if (response.ok) {
                 setWizardFileInfo(result.file_path);
-                const chatResponse = await fetch('http://10.0.0.252:4000/chatbot_format', {
+                const chatResponse = await fetch(`http://${ipAddress}:4000/chatbot_format`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ file_path: result.file_path })
@@ -264,7 +282,7 @@ const Upload = ({ onPreviewData }) => {
         setChatInput("");
 
         try {
-            const response = await fetch('http://10.0.0.252:4000/chatbot_format', {
+            const response = await fetch(`http://${ipAddress}:4000/chatbot_format`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ query: chatInput })
@@ -343,10 +361,10 @@ const Upload = ({ onPreviewData }) => {
                         {datasets.map((dataset, index) => {
                             const fileExtension = dataset.name.split('.').pop().toLowerCase();
                             return (
-                                <li 
+                                <li
                                     className={`datasetListItem ${fileInfo != null && dataset.name === fileInfo ? 'selected' : ''}`}
                                     key={index}
-                                    onClick={() => handleDatasetClick(dataset.name)}
+                                    onClick={() => handleDatasetClick(dataset.name, dataset.size)}
                                 >
                                     {['csv', 'json', 'mp3', 'wav', 'mp4', 'avi', 'jpg', 'jpeg', 'png'].includes(fileExtension) ? (
                                         <img src={getFileIcon(fileExtension)} style={{ marginRight: '8px', fontSize: '1.5em', width: '24px', height: '24px' }} alt={`${fileExtension} icon`} />
@@ -505,6 +523,18 @@ const Upload = ({ onPreviewData }) => {
                         </button>
                     </div>
                 </div>
+            </div>
+            <div>
+                <input
+                    type="text"
+                    id="ipAddressInput"
+                    value={ipAddress}
+                    onChange={(e) => setIpAddress(e.target.value)}
+                    placeholder="Enter IP address"
+                />
+                <button className="button" onClick={() => setIpAddress(document.getElementById("ipAddressInput").value)}>
+                    Update IP
+                </button>
             </div>
         </section>
     );

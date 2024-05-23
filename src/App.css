@@ -175,7 +175,7 @@ footer {
 #previewContainer {
   display: flex;
   flex: 1;
-  min-height: 69vh;
+  min-height: 63vh;
   flex-direction: row;
   gap: 1rem;
 }
