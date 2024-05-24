@@ -36,6 +36,11 @@ const Upload = ({ onPreviewData }) => {
     const chatWindowRef = useRef(null);
     const [isAutoScrollEnabled, setIsAutoScrollEnabled] = useState(true);
 
+
+    const [searchTerm, setSearchTerm] = useState('');
+    const [editName, setEditName] = useState(null);
+    const [editValue, setEditValue] = useState('');
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -103,7 +108,6 @@ const Upload = ({ onPreviewData }) => {
         setLoading(false);
     }, [ipAddress]);
 
-
     useEffect(() => {
         fetchDatasets();
         const interval = setInterval(fetchDatasets, 30000); // Poll every 30 seconds
@@ -168,6 +172,35 @@ const Upload = ({ onPreviewData }) => {
         setSelectedKeys([]); // Clear out the previous list of selected keys
         fetchPreviewData(filePath);
     };
+
+    const handleEditClick = (name) => {
+        setEditName(name);
+        setEditValue(name);
+    };
+
+    const handleEditChange = (e) => {
+        setEditValue(e.target.value);
+    };
+
+    const handleEditSubmit = async () => {
+        try {
+            const response = await fetch(`http://${ipAddress}:4000/rename_file`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ old_name: editName, new_name: editValue })
+            });
+            const result = await response.json();
+            if (response.ok) {
+                fetchDatasets(); // Refresh the dataset list
+                setEditName(null);
+            } else {
+                alert(result.error);
+            }
+        } catch (error) {
+            console.error('Error renaming file:', error);
+        }
+    };
+
 
     const handleWizardFileChange = async (event) => {
         const selectedFile = event.target.files[0];
@@ -346,33 +379,66 @@ const Upload = ({ onPreviewData }) => {
         }
     };
 
+        const filteredDatasets = datasets.filter(dataset => dataset.name.toLowerCase().includes(searchTerm.toLowerCase()));
+
     return (
         <section id="upload" className="active">
             <div id="upload-container">
                 <div id="leftPanel">
                     <h2>Available Datasets</h2>
+                    <input
+                        type="text"
+                        placeholder="Search datasets..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        style={{ marginBottom: '16px', padding: '8px', width: '100%' }}
+                    />
                     {loading && <p>Loading datasets...</p>}
                     <ul id="fileList" style={{
-                        display: 'grid',
+                        display: 'block',
                         minHeight: "40vh",
-                        gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-                        gap: '1rem'
                     }}>
-                        {datasets.map((dataset, index) => {
+                        {filteredDatasets.map((dataset, index) => {
                             const fileExtension = dataset.name.split('.').pop().toLowerCase();
                             return (
                                 <li
                                     className={`datasetListItem ${fileInfo != null && dataset.name === fileInfo ? 'selected' : ''}`}
                                     key={index}
+                                    style={{
+                                        display: 'flex',
+                                        margin: '16px',
+                                        alignItems: 'center',
+                                        padding: '8px 0',
+                                        cursor: 'pointer',
+                                    }}
                                     onClick={() => handleDatasetClick(dataset.name, dataset.size)}
                                 >
                                     {['csv', 'json', 'mp3', 'wav', 'mp4', 'avi', 'jpg', 'jpeg', 'png'].includes(fileExtension) ? (
-                                        <img src={getFileIcon(fileExtension)} style={{ marginRight: '8px', fontSize: '1.5em', width: '24px', height: '24px' }} alt={`${fileExtension} icon`} />
+                                        <img src={getFileIcon(fileExtension)} style={{ marginRight: '8px', fontSize: '1.5em', width: '24px', height: '24px'}} alt={`${fileExtension} icon`} />
                                     ) : (
                                         <i className={getFileIcon(fileExtension)} style={{ marginRight: '8px', fontSize: '1.5em' }}></i>
                                     )}
+                                    <div style={{ flex: 1 }}>
+                                        {editName === dataset.name ? (
+                                            <div style={{ display: 'flex' }}>
+                                                <input
+                                                    type="text"
+                                                    value={editValue}
+                                                    onChange={handleEditChange}
+                                                    style={{ flex: 1 }}
+                                                />
+                                                <button onClick={handleEditSubmit} style={{ marginLeft: '8px' }}>Save</button>
+                                            </div>
+                                        ) : (
                                     <div>
                                         <span style={{ fontWeight: 'bold', color: '#1a73e8' }}>{dataset.name}</span>
+                                            <i
+                                                className="fas fa-edit"
+                                                style={{ marginLeft: '8px', cursor: 'pointer', color: '#666' }}
+                                                onClick={() => handleEditClick(dataset.name)}
+                                            ></i>
+                                            </div>
+                                        )}
                                         <div style={{ fontSize: '0.8em', color: '#555' }}>
                                             <p style={{ color: '#e8711a' }}>Size: {formatBytes(dataset.size)}</p>
                                             <p style={{ color: '#34a853' }}>Uploaded: {timeAgo(dataset.upload_date)}</p>
@@ -524,7 +590,7 @@ const Upload = ({ onPreviewData }) => {
                     </div>
                 </div>
             </div>
-            <div>
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
                 <input
                     type="text"
                     id="ipAddressInput"

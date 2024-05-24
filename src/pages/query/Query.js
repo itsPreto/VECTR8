@@ -4,21 +4,26 @@ import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import "./Query.css";
 
-const Query = ({ selectedDb }) => {
+const Query = () => {
   const [queryText, setQueryText] = useState(() => localStorage.getItem("queryText") || "");
   const [similarityMetric, setSimilarityMetric] = useState(() => localStorage.getItem("similarityMetric") || "cosine");
   const [results, setResults] = useState(() => JSON.parse(localStorage.getItem("results")) || []);
   const [ipAddress] = useState(() => localStorage.getItem("ipAddress") || "127.0.0.1");
-  const [isLoading] = useState(false);
+  const [selectedDb] = useState(() => {
+    const db = localStorage.getItem("selectedDb");
+    return db ? JSON.parse(db) : "";
+  });
+    const [isLoading] = useState(false);
   const [progress] = useState(0);
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   if (!selectedDb) {
-  //     alert("No database selected. Please select a database first.");
-  //   }
-  // }, [selectedDb, navigate]);
-
+  useEffect(() => {
+    if (!selectedDb) {
+      alert("No database selected. Please select a database first.");
+    }
+    console.log("Query.js: selectedDb", selectedDb);
+  }, [selectedDb, navigate]);
+  
   useEffect(() => {
     localStorage.setItem("queryText", queryText);
   }, [queryText]);

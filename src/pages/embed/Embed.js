@@ -161,6 +161,7 @@ const Embed = () => {
 
   const handleDbSelect = (db) => {
     setSelectedDb(db);
+    console.log("selected_db:", db);
     localStorage.setItem('selectedDb', JSON.stringify(db));
     navigate('/query'); // Navigate to the Preview page
   };

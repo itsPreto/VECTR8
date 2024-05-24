@@ -20,7 +20,7 @@ const NavbarHook = ({ selectedKeys, filePath, onRouteChange }) => {
   };
 
   const handleNavLinkClick = (path) => {
-    onRouteChange(path);
+    // onRouteChange(path);
     navigate(path);
     closeMobileMenu();
   };

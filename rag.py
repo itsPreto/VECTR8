@@ -340,6 +340,31 @@ def upload_file():
         file.save(file_path)
         return jsonify({'file_path': file_path}), 200
     
+@app.route('/rename_file', methods=['POST'])
+def rename_file():
+    data = request.get_json()
+    old_name = data.get('old_name')
+    new_name = data.get('new_name')
+
+    if not old_name or not new_name:
+        return jsonify({'error': 'Invalid filenames provided'}), 400
+
+    old_path = os.path.join('./public/uploads', old_name)
+    new_path = os.path.join('./public/uploads', new_name)
+
+    if not os.path.exists(old_path):
+        return jsonify({'error': 'File not found'}), 404
+
+    if os.path.exists(new_path):
+        return jsonify({'error': 'New filename already exists'}), 400
+
+    try:
+        os.rename(old_path, new_path)
+        return jsonify({'message': 'File renamed successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+    
 @app.route('/preview_file', methods=['POST'])
 def preview_file():
     data = request.get_json()
